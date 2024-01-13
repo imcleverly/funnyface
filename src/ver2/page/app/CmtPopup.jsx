@@ -11,25 +11,24 @@ import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
 import { Modal } from "antd";
 
+import useAuth from "../../hooks/useAuth";
+
 const templateComponents = {
   TemplateCmt1: TemplateCmt1,
   TemplateCmt2: TemplateCmt2,
   TemplateCmt3: TemplateCmt3,
   TemplateCmt4: TemplateCmt4,
 };
-const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-const idUser = userInfo ? userInfo.id_user : 0;
-console.log(idUser);
 
 function CmtPopup(props) {
   const [actionCMT, setActionCMT] = useState({ status: false, value: 0 });
   const param = useParams();
   const [dataCmt, setDataCmt] = useState([]);
   const [location, setLocation] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user-info"));
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const token = userInfo && userInfo.token;
-  
+  const { user } = useAuth();
+  const idUser = user.id_user || 0;
+  const token = user.token;
+
   const [imgComment, setImgComment] = useState("");
   const templateCmt = props.TemplateCmt;
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
@@ -68,7 +67,6 @@ function CmtPopup(props) {
       );
       toast.success(response.data.message);
       setOpen(false);
-
     } catch (error) {
       console.error("Error sending report:", error);
 
@@ -131,7 +129,7 @@ function CmtPopup(props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedComment, setEditedComment] = useState("");
-  const [websckt,setWebsckt] = useState("");
+  const [websckt, setWebsckt] = useState("");
 
   const startEdit = (comment) => {
     setIsEditing(true);
@@ -158,8 +156,8 @@ function CmtPopup(props) {
         { content: editedComment },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -182,16 +180,16 @@ function CmtPopup(props) {
     }
   };
 
-
   //delete cmt
   const deleteComment = async (idComment) => {
     try {
       const response = await axios.delete(
-        `https://metatechvn.store/lovehistory/delete/${idComment}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+        `https://metatechvn.store/lovehistory/delete/${idComment}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      }
       );
       toast.success(response.data.message);
       window.location.reload();
@@ -206,17 +204,19 @@ function CmtPopup(props) {
   };
   const closePopup = () => {
     props.setIsOpenPopup(false);
-    console.log('props:', props)
+    console.log("props:", props);
   };
   const fetchDataCmt = async () => {
     console.log(1234);
     try {
       const response = await axios.get(
-        `https://metatechvn.store/lovehistory/comment/${props.data.so_thu_tu_su_kien}?id_toan_bo_su_kien=${param.id}&id_user=${idUser}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+        `https://metatechvn.store/lovehistory/comment/${props.data.so_thu_tu_su_kien}?id_toan_bo_su_kien=${param.id}&id_user=${idUser}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       const data = await response.data.comment;
       console.log(response.data.comment);
@@ -251,14 +251,14 @@ function CmtPopup(props) {
   console.log(ip);
   console.log("====================================");
   useEffect(() => {
-  const url = "ws://localhost:8888/ws/" + 2;
-  const ws = new WebSocket(url);
-  ws.onopen = (event) => {
-  ws.send("Connect");
-  };
-  setWebsckt (ws);
-  //clean up function when we close page
-  return () => ws.close();
+    const url = "ws://localhost:8888/ws/" + 2;
+    const ws = new WebSocket(url);
+    ws.onopen = (event) => {
+      ws.send("Connect");
+    };
+    setWebsckt(ws);
+    //clean up function when we close page
+    return () => ws.close();
   }, []);
   useEffect(() => {
     fetch(`https://api.ip.sb/geoip/${ipComment}`)
@@ -271,13 +271,11 @@ function CmtPopup(props) {
       });
   }, [ipComment]);
 
-
-
   const HandleSendCmt = async (e) => {
     setIsImageUploading(true);
     const url = "https://metatechvn.store/lovehistory/comment";
     let comment = {};
-    let comment2 = {}
+    let comment2 = {};
 
     comment = {
       device_cmt: userAgent,
@@ -292,31 +290,30 @@ function CmtPopup(props) {
       id_toan_bo_su_kien: param.id,
       ipComment: ipComment,
       so_thu_tu_su_kien: props.data.so_thu_tu_su_kien,
-      id_user: user?.id_user
-    }
+      id_user: user?.id_user,
+    };
     if (!inputValue.trim() && !imgComment) {
       toast.warning("Comment cannot be empty!");
       return;
     }
     const data = { ...comment, noi_dung_cmt: inputValue };
-    const jsonData = JSON.stringify(comment2)
-    websckt.send(jsonData)
+    const jsonData = JSON.stringify(comment2);
+    websckt.send(jsonData);
     await axios
       .post(url, data, {
         headers: {
-          "Content-Type": "multipart/form-data"
-          , Authorization: `Bearer ${token}`
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
         setInputValue("");
-        console.log(response.data);        
+        console.log(response.data);
         setDataCmt((prev) => [...prev, response.data.comment]);
         setImgComment("");
         setIsImageUploading(false);
         toast.success("Commented!!!");
-        fetchDataCmt()
-
+        fetchDataCmt();
       })
       .catch((error) => {
         toast.error("comment failed");
@@ -407,21 +404,23 @@ function CmtPopup(props) {
                       key={index}
                     >
                       <div className="overflow-hidden rounded-[50%] w-[40px] h-[40px] ml-[20px]">
-                        {cmt && cmt.avatar_user && cmt.avatar_user.startsWith("https") ? (
-                          <Link to={cmt.id_user === 0 ? "" : `/user/${cmt.id_user}`}>
+                        {cmt &&
+                        cmt.avatar_user &&
+                        cmt.avatar_user.startsWith("https") ? (
+                          <Link
+                            to={cmt.id_user === 0 ? "" : `/user/${cmt.id_user}`}
+                          >
                             <img src={cmt && cmt.avatar_user} alt="Avatar" />
                           </Link>
                         ) : (
                           <img src={noAvatar} alt="Avatar" />
                         )}
-
-
-
-
                       </div>
                       <div className="flex flex-col gap-x-2 font-[Montserrat]">
                         <span className="lg:text-[18px] text-lg font-semibold">
-                          {cmt && cmt.user_name ? cmt && cmt.user_name : "Guest"}
+                          {cmt && cmt.user_name
+                            ? cmt && cmt.user_name
+                            : "Guest"}
                         </span>
 
                         <>
@@ -490,37 +489,37 @@ function CmtPopup(props) {
                         <div className="flex gap-3">
                           {idUser === cmt?.id_user
                             ? actionCMT.status &&
-                            actionCMT.value == cmt.id_comment && (
-                              <div className="shadow-[rgba(0,0,0,0.1)_0px_1px_3px_0px,rgba(0,0,0,0.06)_0px_1px_2px_0px] absolute  right-12   rounded-sm bg-slate-100 text-lg text-black">
-                                <button
-                                  className="flex w-full gap-3 px-3 py-1 hover:bg-blue-400 hover:text-white"
-                                  onClick={() => startEdit(cmt)}
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  className="flex w-full gap-3 px-3 py-1 hover:bg-red-400 hover:text-white"
-                                  onClick={() =>
-                                    deleteComment(cmt.id_comment)
-                                  }
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            )
+                              actionCMT.value == cmt.id_comment && (
+                                <div className="shadow-[rgba(0,0,0,0.1)_0px_1px_3px_0px,rgba(0,0,0,0.06)_0px_1px_2px_0px] absolute  right-12   rounded-sm bg-slate-100 text-lg text-black">
+                                  <button
+                                    className="flex w-full gap-3 px-3 py-1 hover:bg-blue-400 hover:text-white"
+                                    onClick={() => startEdit(cmt)}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    className="flex w-full gap-3 px-3 py-1 hover:bg-red-400 hover:text-white"
+                                    onClick={() =>
+                                      deleteComment(cmt.id_comment)
+                                    }
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )
                             : actionCMT.status &&
-                            actionCMT.value == cmt.id_comment && (
-                              <div className="shadow-[rgba(0,0,0,0.1)_0px_1px_3px_0px,rgba(0,0,0,0.06)_0px_1px_2px_0px] absolute right-12 rounded-sm bg-slate-100 text-lg text-black">
-                                <button
-                                  className="w-full px-3 py-1 hover:bg-red-400 hover:text-white"
-                                  onClick={() =>
-                                    showModal(cmt.id_comment, cmt.id_user)
-                                  }
-                                >
-                                  Report
-                                </button>
-                              </div>
-                            )}
+                              actionCMT.value == cmt.id_comment && (
+                                <div className="shadow-[rgba(0,0,0,0.1)_0px_1px_3px_0px,rgba(0,0,0,0.06)_0px_1px_2px_0px] absolute right-12 rounded-sm bg-slate-100 text-lg text-black">
+                                  <button
+                                    className="w-full px-3 py-1 hover:bg-red-400 hover:text-white"
+                                    onClick={() =>
+                                      showModal(cmt.id_comment, cmt.id_user)
+                                    }
+                                  >
+                                    Report
+                                  </button>
+                                </div>
+                              )}
                         </div>
                       </div>
                     </div>
@@ -620,15 +619,9 @@ function CmtPopup(props) {
                         className="w-[30px] h-[30px]"
                         onClick={HandleSendCmt}
                       >
-                        <img
-                          src={send}
-                          alt=""
-                          className="w-[100%] h-[100%]"
-                        />
+                        <img src={send} alt="" className="w-[100%] h-[100%]" />
                       </button>
                     </div>
-
-
                   </form>
                   {imgComment && (
                     <div className="flex items-center gap-2 mt-2">
