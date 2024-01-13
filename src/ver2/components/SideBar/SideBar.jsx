@@ -41,7 +41,7 @@ const SideBar = (props) => {
       name: "Home",
       icon: homeIcon,
       iconActive: homeIconActive,
-      path: "/",
+      path: "/home",
     },
     {
       name: "Love",
@@ -156,7 +156,7 @@ const SideBar = (props) => {
               key={index}
               {...item}
               isActive={
-                (!!currentPath.includes(item.path) && item.name !== "Home") ||
+                !!currentPath.includes(item.path) ||
                 (item.name === "Home" && currentPath === "/")
               }
               sideBarHidden={sideBarHidden}

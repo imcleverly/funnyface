@@ -13,13 +13,11 @@ import heartIcon from "../../components/image/onboard/heartIcon.svg";
 function OnBoard() {
   const navigate = useNavigate();
 
-  const redirectLogin = () => {
-    navigate("login");
-  };
+  const redirectHome = () => navigate("/home");
 
-  const redirectSignUp = () => {
-    navigate("register");
-  };
+  const redirectLogin = () => navigate("/login");
+
+  const redirectSignUp = () => navigate("/register");
 
   return (
     <div className="w-[100vw] min-h-100vh flex flex-col justify-center items-center py-[30px] gap-[100px]">
@@ -59,12 +57,20 @@ function OnBoard() {
             <span className="text-3xl text-gray-400">
               Predict the future of your journey and love.
             </span>
-            <button
-              className="text-3xl rounded-xl bg-green-400 p-3 font-semibold"
-              onClick={redirectLogin}
-            >
-              Get Started
-            </button>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                className="text-2xl rounded-xl bg-white text-black p-3 font-medium"
+                onClick={redirectHome}
+              >
+                View Demos
+              </button>
+              <button
+                className="text-2xl rounded-xl bg-green-400 p-3 font-semibold"
+                onClick={redirectSignUp}
+              >
+                Get Started
+              </button>
+            </div>
           </div>
         </div>
 

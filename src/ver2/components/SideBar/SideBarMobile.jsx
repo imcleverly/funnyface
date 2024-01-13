@@ -39,7 +39,7 @@ const SideBarMobile = ({ openMenu, setOpenMenu }) => {
       name: "Home",
       icon: homeIcon,
       iconActive: homeIconActive,
-      path: "/",
+      path: "/home",
     },
     {
       name: "Love",
@@ -147,7 +147,7 @@ const SideBarMobile = ({ openMenu, setOpenMenu }) => {
                 key={index}
                 {...item}
                 isActive={
-                  (!!currentPath.includes(item.path) && item.name !== "Home") ||
+                  !!currentPath.includes(item.path) ||
                   (item.name === "Home" && currentPath === "/")
                 }
                 sideBarHidden={false}

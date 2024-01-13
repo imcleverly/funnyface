@@ -9,12 +9,15 @@ import Policy from "../ver2/components/Policy";
 
 import AuthMiddleware from "../middleware/AuthMiddleware";
 import HomeMiddleware from "../middleware/HomeMiddleware";
+import OnBoard from "../ver2/page/OnBoard/OnBoard";
 
 export const privateRoutes = (
   <>
     <Route path="" element={<HomeMiddleware />}>
-      <Route index element={<Home />} />
+      <Route index element={<OnBoard />} />
     </Route>
+
+    <Route path="/home" element={<Home />} />
 
     <Route path="" element={<AuthMiddleware />}>
       <Route path="login" element={<Login />} />
