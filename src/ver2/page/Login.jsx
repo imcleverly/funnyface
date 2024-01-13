@@ -89,7 +89,7 @@ export default function Login() {
         navigate("/");
       }
     } catch (error) {
-      return toast.error("Account or password is incorrect !!!");
+      toast.error("Account or password is incorrect !!!");
     }
     setIsLoading(false);
   };

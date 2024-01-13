@@ -38,6 +38,7 @@ import * as faceapi from "face-api.js";
 import RenderRandomWaitImage from "../../components/randomImages";
 import "../../css/AddEvent.css";
 
+import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
 import add from "../../components/image/add.png";
 import "./Love.css";
@@ -60,12 +61,13 @@ function Love() {
   const [showImg, setShowImg] = useState({ img1: null, img2: null });
   const [randomImages, setRandomImages] = useState(null);
   const [isModelWarning, setIsModelWarning] = useState(false);
-
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const token = userInfo && userInfo.token;
   const [filled, setFilled] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [hi, setHi] = useState(false);
+
+  const { user } = useAuth();
+
+  const token = user.token;
 
   const { setIsLoading } = useLoading();
 
@@ -143,7 +145,10 @@ function Love() {
   };
 
   useEffect(() => {
-    loadModels();
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else loadModels();
   }, []);
 
   const loadModels = () => {
@@ -301,7 +306,7 @@ function Love() {
     }
   };
 
-  const idUser = userInfo && userInfo.id_user;
+  const idUser = user.id_user;
 
   const uploadImage = async (image) => {
     if (idUser === null) {

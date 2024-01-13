@@ -1,23 +1,25 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import useLoading from "../../../hooks/useLoading";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../css/AddEvent.css";
 import RenderRandomWaitImage from "../../../components/randomImages";
 import "./MyVideo.css";
 
+import useAuth from "../../../hooks/useAuth";
 import { VideoItem } from "../../../components/VideoItem/VideoItem";
 import Header from "../../../components/Header/Header";
 
 function MyVideo() {
   const [randomImages, setRandomImages] = useState(null);
 
+  const navigate = useNavigate();
   const { setIsLoading } = useLoading();
+  const { user } = useAuth();
 
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const token = userInfo && userInfo.token;
+  const token = user.token;
 
   const totalPages = 100;
 
@@ -27,19 +29,23 @@ function MyVideo() {
     setCount(newPage);
   };
 
-  const idUser = userInfo && userInfo.id_user;
+  const idUser = user.id_user;
   const [apiKeys, setApiKeys] = useState([]);
 
   useEffect(() => {
-    fetch(
-      "https://raw.githubusercontent.com/sonnh7289/python3-download/main/key-ios.json?fbclid=IwAR0CQmAJ4L10gG-po0-LcEja-gNZoNaz01J9CLvGP4shGFnUhcmZvBw-3O0"
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        const keys = data.map((item) => item.APIKey);
-        setApiKeys(keys);
-      })
-      .catch((error) => console.error("Lỗi:", error));
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else
+      fetch(
+        "https://raw.githubusercontent.com/sonnh7289/python3-download/main/key-ios.json?fbclid=IwAR0CQmAJ4L10gG-po0-LcEja-gNZoNaz01J9CLvGP4shGFnUhcmZvBw-3O0"
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          const keys = data.map((item) => item.APIKey);
+          setApiKeys(keys);
+        })
+        .catch((error) => console.error("Lỗi:", error));
   }, []);
 
   useEffect(() => {

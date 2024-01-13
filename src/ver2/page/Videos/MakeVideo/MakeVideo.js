@@ -14,18 +14,20 @@ import "./MakeVideo.css";
 import Swal from "sweetalert2";
 import Header from "../../../components/Header/Header";
 import useLoading from "../../../hooks/useLoading";
+import useAuth from "../../../hooks/useAuth";
 
 function MakeVideo() {
   const [image1, setImage1] = useState(null);
   const [showImg, setShowImg] = useState({ img1: null });
   const [randomImages, setRandomImages] = useState(null);
 
-  const { setIsLoading } = useLoading();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const token = userInfo && userInfo.token;
+  const { user } = useAuth();
+  const { setIsLoading } = useLoading();
+
+  const token = user.token;
 
   const ID_DEFAULT = 2;
   const VIDEO_DEFAULT =
@@ -46,10 +48,13 @@ function MakeVideo() {
   };
 
   useEffect(() => {
-    loadModels();
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else loadModels();
   }, []);
 
-  const idUser = userInfo && userInfo.id_user;
+  const idUser = user.id_user;
 
   const getMyDetailUser = async () => {
     try {

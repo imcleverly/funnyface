@@ -79,7 +79,10 @@ function CreateImage() {
   const [showModals22, setShowModals22] = React.useState(true);
 
   useEffect(() => {
-    loadModels();
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else loadModels();
   }, []);
 
   const loadModels = () => {

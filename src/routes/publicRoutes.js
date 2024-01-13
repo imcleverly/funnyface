@@ -62,6 +62,7 @@ export const publicRoutes = (
     <Route path="/youtube/:idVideo" element={<YoutubeScandal />} />
     <Route path="/tiktok/:idVideo" element={<TiktokScandal />} />
     <Route path="/profile" element={<Profile />} />
+    <Route path="/profile/:id" element={<Profile />} />
 
     <Route path="*" exact={true} element={<NotFound />} />
   </>

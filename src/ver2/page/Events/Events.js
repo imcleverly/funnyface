@@ -1,12 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import headerbg from "../../../ver2/components/image/bg-header.png";
 import Header from "../../components/Header/Header";
+import { toast } from "react-toastify";
 import "./Events.css";
 
+import useAuth from "../../hooks/useAuth";
 import configs from "../../../configs/configs.json";
 import CommonEvent from "../app/CommonEvent";
 
@@ -15,7 +17,9 @@ const { SERVER_API_METATECH } = configs;
 function Events() {
   const EVENTS_DEFAULT_INDEX = 0;
   const [listEvent, setListEvent] = useState([]);
-  const user = JSON.parse(window.localStorage.getItem("user-info"));
+
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const getEventListUser = async (id) => {
     try {
@@ -29,7 +33,10 @@ function Events() {
   };
 
   useEffect(() => {
-    getEventListUser(user.id_user);
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else getEventListUser(user.id_user);
   }, []);
 
   return (

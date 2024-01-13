@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import Header from "../../../components/Header/Header";
 import DetailImage from "../DetailImage/DetailImage";
 import useLoading from "../../../hooks/useLoading";
+import useAuth from "../../../hooks/useAuth";
 
 function MakeImage() {
   const [image1, setImage1] = useState(null);
@@ -22,8 +23,8 @@ function MakeImage() {
   const [imageUpload, setImageUpload] = useState("");
   const [event, setEvent] = useState(null);
 
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const token = userInfo && userInfo.token;
+  const { user } = useAuth();
+  const token = user.token;
 
   const { setIsLoading } = useLoading();
   const navigate = useNavigate();
@@ -46,10 +47,13 @@ function MakeImage() {
   };
 
   useEffect(() => {
-    loadModels();
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else loadModels();
   }, []);
 
-  const idUser = userInfo && userInfo.id_user;
+  const idUser = user.id_user;
 
   const closeUploadImg = async () => {
     setImage1(null);

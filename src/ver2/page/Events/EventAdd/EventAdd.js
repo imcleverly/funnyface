@@ -55,10 +55,15 @@ const EventAdd = () => {
   };
 
   useEffect(() => {
-    loadModels();
-    getImageList(idUser);
-    getVideoList();
-    randomIdTbsk();
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else {
+      loadModels();
+      getImageList(idUser);
+      getVideoList();
+      randomIdTbsk();
+    }
   }, []);
 
   useEffect(() => {

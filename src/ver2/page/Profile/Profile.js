@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import useLoading from "../../hooks/useLoading";
@@ -13,6 +13,7 @@ import sideBarIcon from "../../components/image/sideBar/SideBarIcon.svg";
 import sideBarIconActive from "../../components/image/sideBar/SideBarIconActive.svg";
 import settingIcon from "../../components/image/profile/SettingIcon.svg";
 import settingIconActive from "../../components/image/profile/SettingIconActive.svg";
+import axios from "axios";
 
 const MAX_FILE_SIZE = 10485760;
 
@@ -24,12 +25,14 @@ function Profile() {
     edit: false,
     setting: false,
   });
+  const [userView, setUserView] = useState(null);
 
   const navigate = useNavigate();
   const labelRef = useRef();
   const inputId = useId();
 
   const { setIsLoading } = useLoading();
+  const { id } = useParams();
   const { user } = useAuth();
   const { updateProfileAvatar } = useProfile();
 
@@ -70,10 +73,33 @@ function Profile() {
     setIsLoading(false);
   };
 
-  const checkUser = () => {
-    if (!user.id_user) {
+  const checkUser = async () => {
+    if (!user.id_user && !id) {
       toast.warn("Login to view your profile");
       navigate("/");
+    }
+
+    if (id) {
+      try {
+        const response = await axios.get(
+          `https://metatechvn.store/profile/${id}`
+        );
+
+        const userInfor = response.data;
+
+        if (!userInfor?.id_user) throw new Error();
+
+        setUserView({
+          ...userInfor,
+          link_avatar: userInfor.link_avatar.replace(
+            "/var/www/build_futurelove/",
+            "https://futurelove.online/"
+          ),
+        });
+      } catch (err) {
+        toast.warn("Not found user with id " + id);
+        navigate("/");
+      }
     }
   };
 
@@ -112,14 +138,18 @@ function Profile() {
       <div className="w-full h-[35vh] flex justify-center md:justify-start items-end bg-gray-400 ">
         <div
           className="relative w-[100px] h-[100px] rounded-full overflow-hidden hover:bg-neutral-800 cursor-pointer md:ml-12 mb-5"
-          onClick={() => labelRef.current?.click()}
+          onClick={() => (!userView ? labelRef.current?.click() : null)}
         >
           <img
-            src={user.link_avatar}
+            src={userView?.link_avatar || user.link_avatar}
             alt="Avatar"
             className="w-full h-full hover:opacity-50"
           />
-          <div className="absolute opacity-50 bottom-0 left-0 flex justify-center items-center w-full bg-neutral-600 text-white">
+          <div
+            className={`${
+              userView ? "hidden" : null
+            } absolute opacity-50 bottom-0 left-0 flex justify-center items-center w-full bg-neutral-600 text-white`}
+          >
             Edit
           </div>
         </div>
@@ -127,8 +157,12 @@ function Profile() {
 
       <div className="w-full flex flex-col px-4">
         <div className="flex justify-between text-white">
-          <span className="text-4xl font-semibold">@{user.user_name}</span>
-          <div className="flex items-center gap-4">
+          <span className="text-4xl font-semibold">
+            @{userView?.user_name || user.user_name}
+          </span>
+          <div
+            className={`${userView ? "hidden" : null} flex items-center gap-4`}
+          >
             <button
               className={`py-3 px-6 text-2xl font-semibold rounded-xl ${
                 hover.edit ? "bg-green-400 text-white" : "bg-white text-black"

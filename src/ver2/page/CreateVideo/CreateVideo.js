@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
+import useAuth from "../../hooks/useAuth";
 import useLoading from "../../hooks/useLoading";
 import Header from "../../components/Header/Header";
 import addCircle from "../../components/image/add-circle.png";
@@ -42,17 +43,7 @@ export const CreateVideo = () => {
   const [videoSwap, setVideoSwap] = useState(null);
   const [timeCreate, setTimeCreate] = useState(null);
 
-  console.log(videoSwap);
-  useEffect(() => {
-    loadModels();
-  }, []);
-
-  useEffect(() => {
-    if (videoUrl) {
-      videoRef.current.load();
-      videoUploadRef.current.load();
-    }
-  }, [videoUrl, videoSwap]);
+  const { user } = useAuth();
 
   const loadModels = () => {
     Promise.all([
@@ -283,6 +274,20 @@ export const CreateVideo = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!user.id_user) {
+      navigate("/home");
+      toast.warn("You need to login to do this action");
+    } else loadModels();
+  }, []);
+
+  useEffect(() => {
+    if (videoUrl) {
+      videoRef.current.load();
+      videoUploadRef.current.load();
+    }
+  }, [videoUrl, videoSwap]);
 
   return (
     <>
