@@ -8,6 +8,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import "./Home.css";
+import useLoading from "../../hooks/useLoading";
 import useAuth from "../../hooks/useAuth";
 import { getVideos } from "../../services/video.service";
 import { getEventsByUserId } from "../../services/event.service";
@@ -28,6 +29,7 @@ function Home() {
   });
 
   const navigate = useNavigate();
+  const { setIsLoading } = useLoading();
   const { user } = useAuth();
 
   const nums = { event: 2, comment: 4 };
@@ -64,6 +66,7 @@ function Home() {
   };
 
   const getData = async () => {
+    setIsLoading(true);
     try {
       const userId = user.id_user || 0;
       const videoResponse = await getVideos();
@@ -86,6 +89,7 @@ function Home() {
     } catch (err) {
       toast.err(err.message);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {

@@ -43,13 +43,14 @@ function CommentItem({
         />
       </div>
 
-      <div
-        className="flex flex-col gap-2 text-white cursor-pointer"
-        onClick={handleClickCmt}
-      >
-        <span className="text-2xl font-semibold">{user_name}</span>
-        <span className="text-xl font-medium">{noi_dung_cmt}</span>
-        <span className="text-lg font-light">
+      <div className="flex flex-col gap-2 text-white cursor-pointer">
+        <span className="text-2xl font-semibold" onClick={handleClickUser}>
+          {user_name}
+        </span>
+        <span className="text-xl font-medium" onClick={handleClickCmt}>
+          {noi_dung_cmt}
+        </span>
+        <span className="text-lg font-light" onClick={handleClickCmt}>
           <ReactTimeAgo date={new Date(thoi_gian_release)} locale="en-US" />
         </span>
       </div>
