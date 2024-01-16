@@ -48,10 +48,7 @@ function MakeAlbum() {
   };
 
   useEffect(() => {
-    if (!user.id_user) {
-      navigate("/home");
-      toast.warn("You need to login to do this action");
-    } else loadModels();
+    loadModels();
   }, []);
 
   const idUser = user.id_user;
@@ -116,7 +113,7 @@ function MakeAlbum() {
       }
       console.log(1);
       setIsLoading(false);
-      if (atImg == "img1") {
+      if (atImg === "img1") {
         let send = showImg;
         send.img1 = URL.createObjectURL(file);
         setShowImg(send);

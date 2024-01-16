@@ -10,7 +10,7 @@ export const ImageItem = (props) => {
 
   useEffect(() => {
     const width = imageRef.current.offsetWidth;
-    setHeight(Math.trunc(width * 1.7));
+    setHeight(Math.trunc(width * 1.4));
   }, [imageRef.current]);
 
   return (

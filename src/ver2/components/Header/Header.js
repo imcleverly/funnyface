@@ -150,7 +150,7 @@ const Header = ({ data }) => {
                         src={dataUser.link_nam_goc}
                         alt="boy root"
                         onClick={() => modalShow(dataUser.link_nam_goc)}
-                        className="w-full h-full bg-cover"
+                        className="w-full h-full bg-cover rounded-full"
                       />
                     )}
                     <div className="w-[40px] h-[40px] absolute top-[80%] left-0">
@@ -170,7 +170,7 @@ const Header = ({ data }) => {
                         src={dataUser.link_nu_goc}
                         alt="boy root"
                         onClick={() => modalShow(dataUser.link_nu_goc)}
-                        className="w-full h-full bg-cover"
+                        className="w-full h-full bg-cover rounded-full"
                       />
                     )}
                     <div className="w-[40px] h-[40px] absolute top-[80%] right-0 ">

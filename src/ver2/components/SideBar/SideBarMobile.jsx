@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
+import useAuth from "../../hooks/useAuth";
 import SidebarLink from "./components/SideBarLink";
 import searchIcon from "../../components/image/sideBar/SearchIcon.svg";
 import homeIcon from "../../components/image/sideBar/HomeIcon.svg";
@@ -23,12 +24,16 @@ import helpIcon from "../../components/image/sideBar/HelpIcon.svg";
 import helpIconActive from "../../components/image/sideBar/HelpIconActive.svg";
 import logoutIcon from "../../components/image/sideBar/LogoutIcon.svg";
 import logoutIconActive from "../../components/image/sideBar/LogoutIconActive.svg";
+import loginIcon from "../../components/image/sideBar/LoginIcon.svg";
+import loginIconActive from "../../components/image/sideBar/LoginIconActive.svg";
 
 const SideBarMobile = ({ openMenu, setOpenMenu }) => {
   const [searchKey, setSearchKey] = useState("");
 
   const location = useLocation();
   const currentPath = location.pathname;
+
+  const { user } = useAuth();
 
   const handleSearch = () => {};
 
@@ -93,16 +98,16 @@ const SideBarMobile = ({ openMenu, setOpenMenu }) => {
       path: "/help",
     },
     {
-      name: "Logout",
-      icon: logoutIcon,
-      iconActive: logoutIconActive,
-      path: "logout",
+      name: user.id_user ? "Logout" : "Login/Create Account",
+      icon: user.id_user ? logoutIcon : loginIcon,
+      iconActive: user.id_user ? logoutIconActive : loginIconActive,
+      path: user.id_user ? "logout" : "/login",
     },
   ];
 
   return (
     <div
-      className="fixed lg:hidden flex w-screen h-screen top-0 left-0 bg-black bg-opacity-20 z-[100]"
+      className="fixed lg:hidden flex w-screen min-h-screen top-0 left-0 bg-black bg-opacity-20 z-[100]"
       onClick={(e) => {
         e.stopPropagation();
         setOpenMenu(false);
@@ -146,10 +151,7 @@ const SideBarMobile = ({ openMenu, setOpenMenu }) => {
               <SidebarLink
                 key={index}
                 {...item}
-                isActive={
-                  !!currentPath.includes(item.path) ||
-                  (item.name === "Home" && currentPath === "/")
-                }
+                isActive={!!currentPath.includes(item.path)}
                 sideBarHidden={false}
               />
             ))}

@@ -43,8 +43,6 @@ export const CreateVideo = () => {
   const [videoSwap, setVideoSwap] = useState(null);
   const [timeCreate, setTimeCreate] = useState(null);
 
-  const { user } = useAuth();
-
   const loadModels = () => {
     Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
@@ -276,10 +274,7 @@ export const CreateVideo = () => {
   };
 
   useEffect(() => {
-    if (!user.id_user) {
-      navigate("/home");
-      toast.warn("You need to login to do this action");
-    } else loadModels();
+    loadModels();
   }, []);
 
   useEffect(() => {

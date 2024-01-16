@@ -10,7 +10,7 @@ export const AlbumItem = (props) => {
 
   useEffect(() => {
     const width = albumRef.current.offsetWidth;
-    setHeight(Math.trunc(width * 1.7));
+    setHeight(Math.trunc(width * 1.4));
   }, [albumRef.current]);
 
   return (

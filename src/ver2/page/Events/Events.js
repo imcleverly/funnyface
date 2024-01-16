@@ -1,11 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import headerbg from "../../../ver2/components/image/bg-header.png";
 import Header from "../../components/Header/Header";
-import { toast } from "react-toastify";
 import "./Events.css";
 
 import useAuth from "../../hooks/useAuth";
@@ -18,7 +17,6 @@ function Events() {
   const EVENTS_DEFAULT_INDEX = 0;
   const [listEvent, setListEvent] = useState([]);
 
-  const navigate = useNavigate();
   const { user } = useAuth();
 
   const getEventListUser = async (id) => {
@@ -33,10 +31,7 @@ function Events() {
   };
 
   useEffect(() => {
-    if (!user.id_user) {
-      navigate("/home");
-      toast.warn("You need to login to do this action");
-    } else getEventListUser(user.id_user);
+    getEventListUser(user.id_user);
   }, []);
 
   return (

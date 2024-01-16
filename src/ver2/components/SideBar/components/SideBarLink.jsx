@@ -18,6 +18,7 @@ function SidebarLink({
 
   const handleLogout = () => {
     logout();
+    navigate("/");
   };
 
   return (

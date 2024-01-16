@@ -48,10 +48,7 @@ function MakeVideo() {
   };
 
   useEffect(() => {
-    if (!user.id_user) {
-      navigate("/home");
-      toast.warn("You need to login to do this action");
-    } else loadModels();
+    loadModels();
   }, []);
 
   const idUser = user.id_user;

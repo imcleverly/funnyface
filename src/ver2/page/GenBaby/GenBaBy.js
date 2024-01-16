@@ -3,10 +3,8 @@ import { saveAs } from "file-saver";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import "./GenBaby.css";
-import { useNavigate } from "react-router";
-import useAuth from "../../hooks/useAuth";
-import useLoading from "../../hooks/useLoading";
 
+import useLoading from "../../hooks/useLoading";
 import { loadModels, uploadImage, validImage } from "../../../library/faceapi";
 import { createEvent, getMyDetailUser } from "../../../utils/getDataCommon";
 import Header from "../../components/Header/Header";
@@ -21,8 +19,6 @@ const GenBaby = () => {
   const [imageBaby, setImageBaby] = useState(null);
   const [isBaby, setIsBaby] = useState(false);
 
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { setIsLoading } = useLoading();
 
   const [showImg, setShowImg] = useState({ imgNam: null, imgNu: null });
@@ -50,10 +46,7 @@ const GenBaby = () => {
   }, [filled, isRunning]);
 
   useEffect(() => {
-    if (!user.id_user) {
-      navigate("/home");
-      toast.warn("You need to login to do this action");
-    } else loadModels();
+    loadModels();
   }, []);
 
   const handleChangeName = (e) => {
@@ -70,7 +63,7 @@ const GenBaby = () => {
     try {
       const res = await validImage(URL.createObjectURL(file));
 
-      if (res.length == 0) {
+      if (res.length === 0) {
         resetInput();
         return Swal.fire(
           "Oops...",

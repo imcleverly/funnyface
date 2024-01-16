@@ -123,7 +123,7 @@ const Videos = () => {
             </div>
           </div>
 
-          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-[10px]">
+          <ul className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-[10px]">
             {listVideo &&
               listVideo
                 .slice(20 * (page - 1), 20 * page)

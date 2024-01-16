@@ -33,19 +33,15 @@ function MyImage() {
   const [apiKeys, setApiKeys] = useState([]);
 
   useEffect(() => {
-    if (!user.id_user) {
-      navigate("/home");
-      toast.warn("You need to login to do this action");
-    } else
-      fetch(
-        "https://raw.githubusercontent.com/sonnh7289/python3-download/main/key-ios.json?fbclid=IwAR0CQmAJ4L10gG-po0-LcEja-gNZoNaz01J9CLvGP4shGFnUhcmZvBw-3O0"
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          const keys = data.map((item) => item.APIKey);
-          setApiKeys(keys);
-        })
-        .catch((error) => console.error("Lỗi:", error));
+    fetch(
+      "https://raw.githubusercontent.com/sonnh7289/python3-download/main/key-ios.json?fbclid=IwAR0CQmAJ4L10gG-po0-LcEja-gNZoNaz01J9CLvGP4shGFnUhcmZvBw-3O0"
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const keys = data.map((item) => item.APIKey);
+        setApiKeys(keys);
+      })
+      .catch((error) => console.error("Lỗi:", error));
   }, []);
 
   useEffect(() => {

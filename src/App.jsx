@@ -33,10 +33,10 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="" element={<LayoutMiddleware />}>
-          {publicRoutes}
-          {privateRoutes}
-        </Route>
+        {/* <Route path=""> */}
+        {publicRoutes}
+        {privateRoutes}
+        {/* </Route> */}
       </Routes>
       <Loading status={isLoading} />
     </>

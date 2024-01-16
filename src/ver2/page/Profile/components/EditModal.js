@@ -61,6 +61,7 @@ function EditModal({ openEditModal, setOpenEditModal, user }) {
       const avatarUrl = response.data.link_img;
       updateProfileAvatar(avatarUrl);
       toast.success("Updated successfully!");
+      setOpenEditModal(false);
     } catch (error) {
       toast.error("Error: " + error.message);
     }

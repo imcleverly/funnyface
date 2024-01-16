@@ -1,7 +1,6 @@
 import axios from "axios";
 import * as faceapi from "face-api.js";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,7 +27,6 @@ function MakeImage() {
 
   const { setIsLoading } = useLoading();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const ID_DEFAULT = 1;
 
@@ -47,10 +45,7 @@ function MakeImage() {
   };
 
   useEffect(() => {
-    if (!user.id_user) {
-      navigate("/home");
-      toast.warn("You need to login to do this action");
-    } else loadModels();
+    loadModels();
   }, []);
 
   const idUser = user.id_user;

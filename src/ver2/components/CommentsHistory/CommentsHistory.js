@@ -87,8 +87,8 @@ function CommentsHistory() {
     return dateB - dateA;
   });
 
-  const visitProfile = (idsk, so_thu_tu_su_kien) => {
-    navigate(`/detail/${idsk}/${so_thu_tu_su_kien}`);
+  const visitEventComment = (id, stt) => {
+    navigate(`/events/${id}/${stt}`);
   };
 
   const totalPages = 100;
@@ -113,13 +113,13 @@ function CommentsHistory() {
                 <div className="comment-avatar">
                   {data.avatar_user && data.avatar_user.startsWith("http") ? (
                     <Link
-                      to={data.id_user === 0 ? "" : `/user/${data.id_user}`}
+                      to={data.id_user === 0 ? "" : `/profile/${data.id_user}`}
                     >
                       <img src={data.avatar_user} alt="This is a avatar!" />
                     </Link>
                   ) : (
                     <Link
-                      to={data.id_user === 0 ? "" : `/user/${data.id_user}`}
+                      to={data.id_user === 0 ? "" : `/profile/${data.id_user}`}
                     >
                       <img src={no_avatar} alt="" className="" />
                     </Link>
@@ -129,7 +129,7 @@ function CommentsHistory() {
                 <div
                   className="comment-content"
                   onClick={() =>
-                    visitProfile(
+                    visitEventComment(
                       data.id_toan_bo_su_kien,
                       data.so_thu_tu_su_kien
                     )
