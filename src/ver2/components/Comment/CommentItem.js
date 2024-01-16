@@ -32,6 +32,7 @@ function CommentItem({
         onClick={handleClickUser}
       >
         <img
+          loading="lazy"
           src={
             avatar_user?.replace(
               "/var/www/build_futurelove/",

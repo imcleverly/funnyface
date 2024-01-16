@@ -22,7 +22,7 @@ export const VideoItem = (props) => {
               : `/videos/make-video?link=${props?.link_video}&id=${props?.id}`
           }
         >
-          <video style={{ height }} controls ref={videoRef}>
+          <video style={{ height }} preload="metadata" controls ref={videoRef}>
             <source
               src={
                 type === "video swap" ? props?.link_vid_swap : props?.link_video

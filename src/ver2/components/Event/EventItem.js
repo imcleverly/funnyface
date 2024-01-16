@@ -52,6 +52,7 @@ function Eventitem({
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 items-center cursor-pointer">
         <img
+          loading="lazy"
           src={user.link_avatar}
           alt="Avatar"
           className="w-16 h-16 rounded-full"
@@ -74,12 +75,22 @@ function Eventitem({
           </p>
           <div className="flex gap-5">
             <div className="flex gap-3">
-              <img src={commentIcon} alt="Comment" className="w-8 h-8" />
+              <img
+                loading="lazy"
+                src={commentIcon}
+                alt="Comment"
+                className="w-8 h-8"
+              />
               {count_comment}
             </div>
 
             <div className="flex gap-3">
-              <img src={viewIcon} alt="View" className="w-8 h-8" />
+              <img
+                loading="lazy"
+                src={viewIcon}
+                alt="View"
+                className="w-8 h-8"
+              />
               {count_view}
             </div>
           </div>
@@ -87,11 +98,13 @@ function Eventitem({
 
         <div className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px]">
           <img
+            loading="lazy"
             src={firstDateBgr}
             alt="Date"
             className="absolute top-0 left-0 z-20"
           />
           <img
+            loading="lazy"
             src={link_da_swap}
             alt="Result"
             className="absolute top-[25px] left-[25px] sm:top-[35px] sm:left-[35px] w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]"
@@ -104,7 +117,7 @@ function Eventitem({
           className="flex gap-2 items-center cursor-pointer hover:opacity-60"
           onClick={() => navigate(`/events/${id}/1`)}
         >
-          <img src={commentWhiteIcon} alt="Comment" />
+          <img loading="lazy" src={commentWhiteIcon} alt="Comment" />
           <span className="text-xl">Comment</span>
         </div>
         <CopyToClipboard text={`https://funface.online/events/${id}/1`}>
@@ -112,7 +125,7 @@ function Eventitem({
             className="flex gap-2 items-center cursor-pointer hover:opacity-60"
             onClick={() => toast.success("Copied link to clipboard!")}
           >
-            <img src={shareIcon} alt="Comment" />
+            <img loading="lazy" src={shareIcon} alt="Comment" />
             <span className="text-xl">Share</span>
           </div>
         </CopyToClipboard>

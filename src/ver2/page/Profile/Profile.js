@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
 
 import useLoading from "../../hooks/useLoading";
 import useAuth from "../../hooks/useAuth";
@@ -11,8 +10,8 @@ import {
   changeAvatar,
   getUserById,
 } from "../../services/user.service";
-import { getEventsByUserId } from "../../services/event.service";
-import { getCommentsByUserId } from "../../services/comment.service";
+import { getAllEventsByUserId } from "../../services/event.service";
+import { getAllCommentsByUserId } from "../../services/comment.service";
 
 import SideBarMobile from "../../components/SideBar/SideBarMobile";
 import EditModal from "./components/EditModal";
@@ -110,12 +109,8 @@ function Profile() {
     if (id) {
       try {
         const responseUser = await getUserById(id);
-        const responseEvent = await getEventsByUserId(id);
-        const responseCmt = await getCommentsByUserId(user.id_user);
 
         const userInfor = responseUser?.data;
-        const userEvents = responseEvent?.data;
-        const userComments = responseCmt?.data;
 
         if (!userInfor?.id_user) throw new Error();
 
@@ -126,27 +121,33 @@ function Profile() {
             "https://futurelove.online/"
           ),
         });
-        setEvents(userEvents.list_sukien);
-        setComments(userComments.comment);
+
+        await getEventsAndComments(id);
       } catch (err) {
         toast.warn("Not found user with id " + id);
         navigate("/");
       }
     } else {
-      try {
-        const responseEvent = await getEventsByUserId(user.id_user);
-        const responseCmt = await getCommentsByUserId(user.id_user);
-
-        const userEvents = responseEvent?.data;
-        const userComments = responseCmt?.data;
-
-        setEvents(userEvents.list_sukien);
-        setComments(userComments.comment);
-      } catch (err) {
-        toast.warn("Not found user with id " + user.id_user);
-        navigate("/");
-      }
+      await getEventsAndComments(user.id_user);
     }
+  };
+
+  const getEventsAndComments = async (id) => {
+    setIsLoading(true);
+    try {
+      const responseEvent = await getAllEventsByUserId(id);
+      const responseCmt = await getAllCommentsByUserId(id);
+
+      const userEvents = responseEvent?.data;
+      const userComments = responseCmt?.data;
+
+      setEvents(userEvents.list_sukien);
+      setComments(userComments.comment_user);
+    } catch (err) {
+      toast.warn("Error while trying to get events & comments: " + err.message);
+      navigate("/");
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -233,12 +234,14 @@ function Profile() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 py-4">
           <div className="flex gap-10 text-white font-semibold text-2xl">
-            <span>{events?.length} events</span>
+            <span>{userView?.count_sukien || user.count_sukien} events</span>
 
             <span>{userView?.count_view || user.count_view} views</span>
-            <span>{comments?.length} comments</span>
+            <span>
+              {userView?.count_comment || user.count_comment} comments
+            </span>
           </div>
           <div className="w-full h-[2px] bg-gray-400 opacity-20" />
           <div className="mt-4 grid grid-cols-1 lg:grid-cols-11 max-w-full gap-20 lg:gap-10 text-white">

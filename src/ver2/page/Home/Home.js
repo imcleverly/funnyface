@@ -49,11 +49,7 @@ function Home() {
     },
     1280: {
       slidesPerView: 4,
-      spaceBetween: 40,
-    },
-    1536: {
-      slidesPerView: 4,
-      spaceBetween: 50,
+      spaceBetween: 30,
     },
   };
 
@@ -87,7 +83,7 @@ function Home() {
         comments: commentResponse?.data.comment,
       });
     } catch (err) {
-      toast.err(err.message);
+      toast.error(err.message);
     }
     setIsLoading(false);
   };
@@ -148,7 +144,7 @@ function Home() {
                 clickable: true,
               }}
               navigation={true}
-              modules={[Navigation]}
+              modules={[Pagination, Navigation]}
               breakpoints={breakpoints}
             >
               {data.videos.map((video, index) => (
