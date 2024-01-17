@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { toast } from "react-toastify";
-import { Pagination, Navigation } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
 
 import "./Home.css";
 import useLoading from "../../hooks/useLoading";
@@ -15,7 +14,7 @@ import { getEventsByUserId } from "../../services/event.service";
 import { getCommentsByUserId } from "../../services/comment.service";
 import Header from "../../components/Header/Header";
 import { VideoItem } from "../../components/VideoItem/VideoItem";
-import Eventitem from "../../components/Event/EventItem";
+import EventItem from "../../components/Event/EventItem";
 import CommentItem from "../../components/Comment/CommentItem";
 import PaginationsButton from "../../components/Paginations/PaginationsButton";
 
@@ -31,11 +30,11 @@ function Home() {
   const navigate = useNavigate();
   const { setIsLoading } = useLoading();
   const { user } = useAuth();
+  const userId = user.id_user || 0;
 
-  const nums = { event: 2, comment: 4 };
   const pages = {
-    event: Math.ceil(data.events?.length / nums.event),
-    comment: Math.ceil(data.comments?.length / nums.comment),
+    event: 100,
+    comment: 100,
   };
 
   const breakpoints = {
@@ -64,22 +63,82 @@ function Home() {
   const getData = async () => {
     setIsLoading(true);
     try {
-      const userId = user.id_user || 0;
-      const videoResponse = await getVideos();
-      const eventResponse = await getEventsByUserId(userId);
-      const commentResponse = await getCommentsByUserId(userId);
+      setIsLoading(true);
+      try {
+        const videoResponse = await getVideos();
+        const eventResponse = await getEventsByUserId(
+          userId,
+          currentPage.event
+        );
+        const commentResponse = await getCommentsByUserId(
+          userId,
+          currentPage.comment
+        );
 
-      if (
-        [videoResponse, eventResponse, commentResponse].some(
-          (item) => item.status !== 200
+        if (
+          [videoResponse, eventResponse, commentResponse].some(
+            (item) => item.status !== 200
+          )
         )
-      )
-        throw new Error("Error while getting data");
+          throw new Error("Error while getting data");
+
+        setData({
+          ...data,
+          videos: videoResponse?.data.list_sukien_video,
+          events: eventResponse?.data.list_sukien,
+          comments: commentResponse?.data.comment,
+        });
+      } catch (err) {
+        toast.error(err.message);
+      }
+      setIsLoading(false);
+    } catch (err) {
+      toast.error(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  const getDataEvents = async () => {
+    setIsLoading(true);
+    try {
+      const eventResponse = await getEventsByUserId(userId, currentPage.event);
+
+      if (eventResponse?.status !== 200)
+        throw new Error("Error while getting events data");
+
+      if (eventResponse.data === "exceed the number of pages!!!") {
+        setCurrentPage({ ...currentPage, event: 1 });
+        throw new Error("Exceed the number of pages!");
+      }
 
       setData({
         ...data,
-        videos: videoResponse?.data.list_sukien_video,
         events: eventResponse?.data.list_sukien,
+      });
+    } catch (err) {
+      toast.error(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  const getDataComments = async () => {
+    setIsLoading(true);
+    try {
+      const commentResponse = await getCommentsByUserId(
+        userId,
+        currentPage.comment
+      );
+
+      if (commentResponse?.status !== 200)
+        throw new Error("Error while getting comments data");
+
+      if (commentResponse.data?.message?.includes("exceed")) {
+        setCurrentPage({ ...currentPage, comment: 1 });
+        throw new Error("Exceed the number of pages!");
+      }
+
+      setData({
+        ...data,
         comments: commentResponse?.data.comment,
       });
     } catch (err) {
@@ -91,6 +150,14 @@ function Home() {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    getDataEvents();
+  }, [currentPage.event]);
+
+  useEffect(() => {
+    getDataComments();
+  }, [currentPage.comment]);
 
   return (
     <div>
@@ -118,7 +185,7 @@ function Home() {
                   className="bg-white text-black p-4 w-[fit-content] rounded-xl"
                   onClick={() => navigate("/create-video")}
                 >
-                  <span className="capitalize text-4xl font-semibold" o>
+                  <span className="capitalize text-4xl font-semibold">
                     start face swapping
                   </span>
                 </button>
@@ -144,11 +211,11 @@ function Home() {
                 clickable: true,
               }}
               navigation={true}
-              modules={[Pagination, Navigation]}
+              modules={[Pagination]}
               breakpoints={breakpoints}
             >
-              {data.videos.map((video, index) => (
-                <SwiperSlide key={index} className="cursor-pointer">
+              {data.videos?.map((video, index) => (
+                <SwiperSlide key={index} className="cursor-pointer pb-4">
                   <VideoItem {...video.sukien_video[0]} type="video swap" />
                 </SwiperSlide>
               ))}
@@ -156,46 +223,38 @@ function Home() {
           </div>
 
           <div className="mt-4 grid grid-cols-1 lg:grid-cols-11 max-w-full gap-20 lg:gap-10 text-white">
-            <div className="grid grid-cols-subgrid grid-cols-1 lg:col-span-7 gap-10">
+            <div className="grid grid-cols-subgrid grid-cols-1 lg:col-span-7 gap-4">
               <h3 className="uppercase text-2xl md:text-4xl font-semibold">
                 Events
               </h3>
-              {data.events
-                ?.slice(
-                  nums.event * (currentPage.event - 1),
-                  nums.event * currentPage.event
-                )
-                .map((item, index) => (
-                  <Eventitem key={index} {...item.sukien[0]} />
-                ))}
-              {data.events?.length > 2 && (
-                <PaginationsButton
-                  page={currentPage.event}
-                  totalPages={pages.event}
-                  setPage={setEventPage}
-                />
-              )}
+              <div className="max-h-[80vh] overflow-y-scroll">
+                {data.events?.map((item) =>
+                  item.sukien.map((event, index) => (
+                    <EventItem key={index} {...event} />
+                  ))
+                )}
+              </div>
+              <PaginationsButton
+                page={currentPage.event}
+                totalPages={pages.event}
+                setPage={setEventPage}
+              />
             </div>
 
             <div className="flex flex-col lg:col-span-4 gap-4">
               <h3 className="text-white uppercase text-2xl md:text-4xl font-semibold">
                 Comments
               </h3>
-              {data.comments
-                ?.slice(
-                  nums.comment * (currentPage.comment - 1),
-                  nums.comment * currentPage.comment
-                )
-                .map((item, index) => (
-                  <CommentItem key={index} {...item} />
+              <div className="max-h-[40vh] overflow-y-scroll">
+                {data.comments?.map((comment, index) => (
+                  <CommentItem key={index} {...comment} />
                 ))}
-              {data.comments?.length > 4 && (
-                <PaginationsButton
-                  page={currentPage.comment}
-                  totalPages={pages.comment}
-                  setPage={setCommentPage}
-                />
-              )}
+              </div>
+              <PaginationsButton
+                page={currentPage.comment}
+                totalPages={pages.comment}
+                setPage={setCommentPage}
+              />
             </div>
           </div>
         </div>

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "./Videos.css";
 
+import { getListVideos } from "../../services/video.service";
+import useLoading from "../../hooks/useLoading";
 import Paginations from "../../components/Paginations";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -14,7 +16,9 @@ const Videos = () => {
   const [category, setCategory] = useState(0);
   const [listVideo, setListVideo] = useState([]);
   const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(listVideo.length / 20);
+  const totalPages = 100;
+
+  const { setIsLoading } = useLoading();
 
   const [categoryList, setCategoryList] = useState([]);
 
@@ -45,27 +49,30 @@ const Videos = () => {
     });
   }, []);
 
-  useEffect(() => {
-    axios
-      .get(
-        `https://metatechvn.store/lovehistory/listvideo/1?category=${category}`
-      )
-      .then((response) => {
-        const errorMessage = "exceed the number of pages!!!";
+  const getData = async () => {
+    setIsLoading(true);
+    try {
+      console.log({ page, category });
+      const response = await getListVideos(page, category);
 
-        if (response.data === errorMessage) {
-          // Nếu response.data trùng với chuỗi thông báo, hiển thị alert
-          toast.error(errorMessage);
-        } else {
-          // Nếu không trùng, cập nhật state như bình thường
-          setListVideo(response.data.list_sukien_video);
-          // console.log("list video", response.data);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [category]);
+      if (response.status !== 200)
+        throw new Error("Error while getting videos");
+
+      if (response.data === "exceed the number of pages!!!") {
+        setPage(1);
+        throw new Error("Exceeds the number of pages");
+      }
+
+      setListVideo(response.data.list_sukien_video);
+    } catch (err) {
+      toast.error(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, [category, page]);
 
   const handleChangeCategory = (e) => {
     setPage(1);
@@ -83,7 +90,7 @@ const Videos = () => {
       />
       <div className="max-h-[100vh] overflow-y-scroll rounded-lg py-4">
         <div className="flex flex-col gap-8">
-          <div class="flex justify-between items-center rounded-lg">
+          <div className="flex justify-between items-center rounded-lg">
             <div className="flex items-center rounded-lg bg-green-500 overflow-hidden text-white text-4xl px-3">
               <div>
                 <img src={filterApp} alt="Filter" />
@@ -125,11 +132,9 @@ const Videos = () => {
 
           <ul className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-[10px]">
             {listVideo &&
-              listVideo
-                .slice(20 * (page - 1), 20 * page)
-                .map((video) => (
-                  <VideoItem {...video} type="video goc" key={video.id} />
-                ))}
+              listVideo.map((video) => (
+                <VideoItem {...video} type="video goc" key={video.id} />
+              ))}
           </ul>
         </div>
       </div>

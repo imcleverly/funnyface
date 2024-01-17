@@ -23,7 +23,7 @@ export default function EventResult() {
   const id = params.id;
   const stt_su_kien = params.stt;
 
-  const [dataUser1, setDataUser1] = useState(null);
+  const [data, setData] = useState([]);
 
   const [isActive, setIsActive] = useState(1);
   const [isOpenSidebar, setIsOpenSidebar] = useState(false);
@@ -39,15 +39,12 @@ export default function EventResult() {
     }));
   };
 
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const id_user = userInfo?.id_user;
-
   const fetchDataUser = async () => {
     try {
       const response = await axios.get(
         `https://metatechvn.store/lovehistory/${id}`
       );
-      setDataUser1(response.data.sukien);
+      setData(response.data.sukien);
       console.log(response.data.sukien);
     } catch (err) {
       console.log(err);
@@ -75,6 +72,8 @@ export default function EventResult() {
       <Header
         data={{
           background: `center/cover no-repeat url(${headerbg})`,
+          id_user: data[0]?.id_user,
+          user_name: data[0]?.user_name_tao_sk,
           title: "events",
           download: true,
           events: true,
@@ -100,8 +99,8 @@ export default function EventResult() {
                 </NavLink>
               </li>
 
-              {dataUser1 &&
-                dataUser1.map((item, index) => (
+              {data &&
+                data.map((item, index) => (
                   <li className="events-menu-item" key={index}>
                     <NavLink
                       to={`/events/${id}/${item.so_thu_tu_su_kien}`}
@@ -118,8 +117,8 @@ export default function EventResult() {
               {isActive === 0 ? (
                 <EmptyTemplate />
               ) : (
-                dataUser1 &&
-                dataUser1.map(
+                data &&
+                data.map(
                   (item, index) =>
                     isActive === item.so_thu_tu_su_kien && (
                       <CommonEvent key={index} stt={item.so_thu_tu_su_kien} />
@@ -128,8 +127,8 @@ export default function EventResult() {
               )}
             </aside>
             <div className="flex items-center justify-between overflow-auto lg:hidden">
-              {dataUser1 &&
-                dataUser1.map((item, index) => (
+              {data &&
+                data.map((item, index) => (
                   <li
                     key={index}
                     className={`cursor-pointer flex  text-center justify-center items-center hover:bg-[#782353] rounded-3xl lg:py-10 lg:px-36 py-6 px-2 ${

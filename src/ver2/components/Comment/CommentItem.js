@@ -26,7 +26,7 @@ function CommentItem({
   };
 
   return (
-    <div className="flex py-3 gap-3">
+    <div className="flex pb-3 gap-3">
       <div
         className="w-12 h-12 rounded-full overflow-hidden cursor-pointer"
         onClick={handleClickUser}

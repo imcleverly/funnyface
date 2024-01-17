@@ -70,7 +70,7 @@ const Header = ({ data }) => {
         setOpenMenu={setOpenSideBarMobile}
       />
       <div
-        className="py-[28px] px-[16px] text-white flex flex-col gap-5"
+        className="py-[28px] px-[16px] text-white flex flex-col gap-4"
         style={{
           background:
             data?.background ||
@@ -134,13 +134,13 @@ const Header = ({ data }) => {
           )}
           {data?.myEvent && (
             <Link to="/events" className="text-4xl font-bold">
-              My eventss
+              My events
             </Link>
           )}
         </div>
 
         {data?.events && (
-          <div className="component-header-events pt-[40px]">
+          <div className="flex flex-col gap-10 pt-[20px]">
             <div className="w-full flex justify-between items-center">
               <div className="flex">
                 <div className="relative">
@@ -188,6 +188,11 @@ const Header = ({ data }) => {
                 <Clock data={dataUser?.real_time} />
               </div>
             </div>
+            {data?.id_user && (
+              <Link to={`/profile/${data?.id_user}`} className="text-3xl ml-20">
+                {data?.user_name}
+              </Link>
+            )}
           </div>
         )}
 

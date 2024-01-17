@@ -19,10 +19,7 @@ const PaginationsButton = ({ page, setPage, totalPages }) => {
         <span>{"<"}</span>
       </button>
       {getPages
-        .slice(
-          page === 1 ? page - 1 : page - 2,
-          page === 1 ? page + 2 : page + 1
-        )
+        .slice(page < 3 ? 0 : page - 3, page < 3 ? page + 5 - page : page + 2)
         .map((item) => (
           <button
             key={item}

@@ -49,7 +49,7 @@ function Eventitem({
   }, []);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pb-4">
       <div className="flex gap-2 items-center cursor-pointer">
         <img
           loading="lazy"

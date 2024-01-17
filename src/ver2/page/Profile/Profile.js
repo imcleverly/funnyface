@@ -10,8 +10,8 @@ import {
   changeAvatar,
   getUserById,
 } from "../../services/user.service";
-import { getAllEventsByUserId } from "../../services/event.service";
-import { getAllCommentsByUserId } from "../../services/comment.service";
+import { getEventsByUserId } from "../../services/event.service";
+import { getCommentsByUserId } from "../../services/comment.service";
 
 import SideBarMobile from "../../components/SideBar/SideBarMobile";
 import EditModal from "./components/EditModal";
@@ -40,10 +40,10 @@ function Profile() {
     event: 1,
     comment: 1,
   });
-  const nums = { event: 2, comment: 4 };
+
   const pages = {
-    event: Math.ceil(events.length / nums.event),
-    comment: Math.ceil(comments.length / nums.comment),
+    event: 100,
+    comment: 100,
   };
 
   const setEventPage = (item) => {
@@ -62,6 +62,8 @@ function Profile() {
   const { id } = useParams();
   const { user } = useAuth();
   const { updateProfileAvatar } = useProfile();
+
+  const userId = id || user.id_user || 0;
 
   const setHoverChange = (item) => {
     setHover({ ...hover, ...item });
@@ -101,7 +103,7 @@ function Profile() {
   };
 
   const checkUser = async () => {
-    if (!user.id_user && !id) {
+    if (!!!userId) {
       toast.warn("Login to view your profile");
       navigate("/");
     }
@@ -128,24 +130,63 @@ function Profile() {
         navigate("/");
       }
     } else {
-      await getEventsAndComments(user.id_user);
+      await getEventsAndComments(userId);
     }
   };
 
   const getEventsAndComments = async (id) => {
     setIsLoading(true);
     try {
-      const responseEvent = await getAllEventsByUserId(id);
-      const responseCmt = await getAllCommentsByUserId(id);
+      const responseEvent = await getEventsByUserId(id, currentPage.event);
+      const responseCmt = await getCommentsByUserId(id, currentPage.comment);
 
       const userEvents = responseEvent?.data;
       const userComments = responseCmt?.data;
 
       setEvents(userEvents.list_sukien);
-      setComments(userComments.comment_user);
+      setComments(userComments.comment);
     } catch (err) {
       toast.warn("Error while trying to get events & comments: " + err.message);
-      navigate("/");
+    }
+    setIsLoading(false);
+  };
+
+  const getEvents = async (id) => {
+    setIsLoading(true);
+    try {
+      const responseEvent = await getEventsByUserId(id, currentPage.event);
+
+      if (responseEvent?.status !== 200)
+        throw new Error("Error while getting events data");
+
+      if (responseEvent.data === "exceed the number of pages!!!") {
+        setCurrentPage({ ...currentPage, event: 1 });
+        throw new Error("Exceed the number of pages!");
+      }
+
+      setEvents(responseEvent.data.list_sukien);
+    } catch (err) {
+      toast.warn(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  const getComments = async (id) => {
+    setIsLoading(true);
+    try {
+      const responseCmt = await getCommentsByUserId(id, currentPage.comment);
+
+      if (responseCmt?.status !== 200)
+        throw new Error("Error while getting comments data");
+
+      if (responseCmt.data?.message?.includes("exceed")) {
+        setCurrentPage({ ...currentPage, comment: 1 });
+        throw new Error("Exceed the number of pages!");
+      }
+
+      setComments(responseCmt.data.comment);
+    } catch (err) {
+      toast.warn("Error while trying to get comments: " + err.message);
     }
     setIsLoading(false);
   };
@@ -153,6 +194,14 @@ function Profile() {
   useEffect(() => {
     checkUser();
   }, [id]);
+
+  useEffect(() => {
+    getEvents(userId);
+  }, [currentPage.event]);
+
+  useEffect(() => {
+    getComments(userId);
+  }, [currentPage.comment]);
 
   return (
     <div className="relative bg-custom-gray flex flex-col items-center rounded-lg overflow-hidden font-[Quicksand] gap-3 pb-6">
@@ -252,22 +301,19 @@ function Profile() {
               {!!!events?.length ? (
                 <span className="text-xl">You don't have any events yet.</span>
               ) : (
-                events
-                  .slice(
-                    nums.event * (currentPage.event - 1),
-                    nums.event * currentPage.event
-                  )
-                  .map((item, index) => (
-                    <EventItem key={index} {...item.sukien[0]} />
-                  ))
+                <div className="max-h-[80vh] overflow-y-scroll">
+                  {events?.map((item) =>
+                    item.sukien.map((event, index) => (
+                      <EventItem key={index} {...event} />
+                    ))
+                  )}
+                </div>
               )}
-              {events?.length > 2 && (
-                <PaginationsButton
-                  page={currentPage.event}
-                  totalPages={pages.event}
-                  setPage={setEventPage}
-                />
-              )}
+              <PaginationsButton
+                page={currentPage.event}
+                totalPages={pages.event}
+                setPage={setEventPage}
+              />
             </div>
 
             <div className="flex flex-col lg:col-span-4 gap-4">
@@ -279,20 +325,17 @@ function Profile() {
                   You don't have any comments yet.
                 </span>
               ) : (
-                comments
-                  .slice(
-                    nums.comment * (currentPage.comment - 1),
-                    nums.comment * currentPage.comment
-                  )
-                  .map((item, index) => <CommentItem key={index} {...item} />)
+                <div className="max-h-[40vh] overflow-y-scroll">
+                  {comments?.map((comment, index) => (
+                    <CommentItem key={index} {...comment} />
+                  ))}
+                </div>
               )}
-              {comments?.length > 4 && (
-                <PaginationsButton
-                  page={currentPage.comment}
-                  totalPages={pages.comment}
-                  setPage={setCommentPage}
-                />
-              )}
+              <PaginationsButton
+                page={currentPage.comment}
+                totalPages={pages.comment}
+                setPage={setCommentPage}
+              />
             </div>
           </div>
         </div>
