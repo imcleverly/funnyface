@@ -92,12 +92,6 @@ const SideBarMobile = ({ openMenu, setOpenMenu }) => {
 
   const botMenus = [
     {
-      name: "Help & getting started",
-      icon: helpIcon,
-      iconActive: helpIconActive,
-      path: "/help",
-    },
-    {
       name: user.id_user ? "Logout" : "Login/Create Account",
       icon: user.id_user ? logoutIcon : loginIcon,
       iconActive: user.id_user ? logoutIconActive : loginIconActive,

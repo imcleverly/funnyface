@@ -22,8 +22,6 @@ import createImageIcon from "../../components/image/sideBar/CreateImageIcon.svg"
 import createImageIconActive from "../../components/image/sideBar/CreateImageIconActive.svg";
 import babyIcon from "../../components/image/sideBar/BabyIcon.svg";
 import babyIconActive from "../../components/image/sideBar/BabyIconActive.svg";
-import helpIcon from "../../components/image/sideBar/HelpIcon.svg";
-import helpIconActive from "../../components/image/sideBar/HelpIconActive.svg";
 import logoutIcon from "../../components/image/sideBar/LogoutIcon.svg";
 import logoutIconActive from "../../components/image/sideBar/LogoutIconActive.svg";
 import loginIcon from "../../components/image/sideBar/LoginIcon.svg";
@@ -97,12 +95,6 @@ const SideBar = (props) => {
   ];
 
   const botMenus = [
-    {
-      name: "Help & getting started",
-      icon: helpIcon,
-      iconActive: helpIconActive,
-      path: "/help",
-    },
     {
       name: user.id_user ? "Logout" : "Login/Create Account",
       icon: user.id_user ? logoutIcon : loginIcon,

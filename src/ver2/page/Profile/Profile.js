@@ -10,8 +10,8 @@ import {
   changeAvatar,
   getUserById,
 } from "../../services/user.service";
-import { getEventsByUserId } from "../../services/event.service";
-import { getCommentsByUserId } from "../../services/comment.service";
+import { getAllEventsByUserId } from "../../services/event.service";
+import { getAllCommentsByUserId } from "../../services/comment.service";
 
 import SideBarMobile from "../../components/SideBar/SideBarMobile";
 import EditModal from "./components/EditModal";
@@ -108,43 +108,39 @@ function Profile() {
       navigate("/");
     }
 
-    if (id) {
-      try {
-        const responseUser = await getUserById(id);
+    try {
+      const responseUser = await getUserById(id || userId);
 
-        const userInfor = responseUser?.data;
+      const userInfor = responseUser?.data;
 
-        if (!userInfor?.id_user) throw new Error();
+      if (!userInfor?.id_user) throw new Error();
 
-        setUserView({
-          ...userInfor,
-          link_avatar: userInfor.link_avatar.replace(
-            "/var/www/build_futurelove/",
-            "https://futurelove.online/"
-          ),
-        });
+      setUserView({
+        ...userInfor,
+        link_avatar: userInfor.link_avatar.replace(
+          "/var/www/build_futurelove/",
+          "https://futurelove.online/"
+        ),
+      });
 
-        await getEventsAndComments(id);
-      } catch (err) {
-        toast.warn("Not found user with id " + id);
-        navigate("/");
-      }
-    } else {
-      await getEventsAndComments(userId);
+      await getEventsAndComments(id || userId);
+    } catch (err) {
+      toast.warn("Not found user with id " + id);
+      navigate("/");
     }
   };
 
   const getEventsAndComments = async (id) => {
     setIsLoading(true);
     try {
-      const responseEvent = await getEventsByUserId(id, currentPage.event);
-      const responseCmt = await getCommentsByUserId(id, currentPage.comment);
+      const responseEvent = await getAllEventsByUserId(id, currentPage.event);
+      const responseCmt = await getAllCommentsByUserId(id, currentPage.comment);
 
       const userEvents = responseEvent?.data;
       const userComments = responseCmt?.data;
 
       setEvents(userEvents.list_sukien);
-      setComments(userComments.comment);
+      setComments(userComments.comment_user);
     } catch (err) {
       toast.warn("Error while trying to get events & comments: " + err.message);
     }
@@ -154,7 +150,7 @@ function Profile() {
   const getEvents = async (id) => {
     setIsLoading(true);
     try {
-      const responseEvent = await getEventsByUserId(id, currentPage.event);
+      const responseEvent = await getAllEventsByUserId(id, currentPage.event);
 
       if (responseEvent?.status !== 200)
         throw new Error("Error while getting events data");
@@ -174,7 +170,7 @@ function Profile() {
   const getComments = async (id) => {
     setIsLoading(true);
     try {
-      const responseCmt = await getCommentsByUserId(id, currentPage.comment);
+      const responseCmt = await getAllCommentsByUserId(id, currentPage.comment);
 
       if (responseCmt?.status !== 200)
         throw new Error("Error while getting comments data");
@@ -184,7 +180,7 @@ function Profile() {
         throw new Error("Exceed the number of pages!");
       }
 
-      setComments(responseCmt.data.comment);
+      setComments(responseCmt.data.comment_user);
     } catch (err) {
       toast.warn("Error while trying to get comments: " + err.message);
     }
@@ -234,7 +230,11 @@ function Profile() {
       <div className="w-full h-[35vh] flex justify-center md:justify-start items-end bg-gray-400 ">
         <div
           className="relative w-[100px] h-[100px] rounded-full overflow-hidden hover:bg-neutral-800 cursor-pointer md:ml-12 mb-5"
-          onClick={() => (!userView ? labelRef.current?.click() : null)}
+          onClick={() =>
+            user?.id_user !== Number(id) && !!id
+              ? null
+              : labelRef.current?.click()
+          }
         >
           <img
             src={userView?.link_avatar || user.link_avatar}
@@ -243,7 +243,7 @@ function Profile() {
           />
           <div
             className={`${
-              userView ? "hidden" : null
+              user?.id_user !== Number(id) && !!id ? "hidden" : null
             } absolute opacity-50 bottom-0 left-0 flex justify-center items-center w-full bg-neutral-600 text-white`}
           >
             Edit
@@ -257,7 +257,9 @@ function Profile() {
             @{userView?.user_name || user.user_name}
           </span>
           <div
-            className={`${userView ? "hidden" : null} flex items-center gap-4`}
+            className={`${
+              user?.id_user !== Number(id) && !!id ? "hidden" : null
+            } flex items-center gap-4`}
           >
             <button
               className={`py-3 px-6 text-2xl font-semibold rounded-xl ${
@@ -302,10 +304,13 @@ function Profile() {
                 <span className="text-xl">You don't have any events yet.</span>
               ) : (
                 <div className="max-h-[80vh] overflow-y-scroll">
-                  {events?.map((item) =>
-                    item.sukien.map((event, index) => (
+                  {events?.map(
+                    (item, index) => (
+                      <EventItem key={index} {...item.sukien[0]} />
+                    )
+                    /* item.sukien.map((event, index) => (
                       <EventItem key={index} {...event} />
-                    ))
+                    )) */
                   )}
                 </div>
               )}

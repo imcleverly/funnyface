@@ -92,11 +92,11 @@ const DetailAlbum = ({ event }) => {
         }}
       />
       <div className="image-detail">
-        <div className="flex justify-between">
-          <div className="w-1/3 detail-user">
-            <span className="text-[#1db954] text-4xl max-w-[60%] ">
-              Success, this is the result!! Click image to download...
-            </span>
+        <div className="flex flex-col xl:flex-row items-center justify-between gap-5">
+          <div className="flex flex-col gap-4 xl:w-1/3">
+            <p className="w-full text-green-400 text-3xl font-semibold">
+              Success, this is the result!! Click on image to download...
+            </p>
 
             <div className="detail-info">
               <div className="detail-avatar lg:w-[160px] lg:h-[160px] w-[90px] h-[90px]">
@@ -140,7 +140,7 @@ const DetailAlbum = ({ event }) => {
                 >
                   <img
                     src={item}
-                    alt="Image template"
+                    alt="template"
                     loading="lazy"
                     className="w-full h-full object-cover"
                   />

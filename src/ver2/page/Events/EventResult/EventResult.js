@@ -81,12 +81,12 @@ export default function EventResult() {
         }}
       />
       <div className="min-h-screen overflow-hidden events">
-        <div className="events-main">
+        <div className="flex flex-col-reverse lg:flex-row gap-7 py-10 px-6">
           <div
-            className={`lg:w-1/4 z-[10] lg:block ${
+            className={`lg:w-1/4 z-[10] max-h-[80vh] overflow-y-scroll lg:block ${
               isOpenSidebar
                 ? "col-span-8 sm:col-span-6 transition-all transform duration-300 ease-linear block opacity-100 absolute top-0 left-0 bottom-0 h-full overflow-auto"
-                : "transition-all transform hidden duration-300 ease-out "
+                : "transition-all transform duration-300 ease-out "
             }`}
             style={{
               overflowY: "auto",
@@ -112,7 +112,7 @@ export default function EventResult() {
                 ))}
             </ul>
           </div>
-          <div className="w-full min-h-screen lg:w-3/4">
+          <div className="w-full lg:w-3/4">
             <aside className="events-content">
               {isActive === 0 ? (
                 <EmptyTemplate />
@@ -126,24 +126,8 @@ export default function EventResult() {
                 )
               )}
             </aside>
-            <div className="flex items-center justify-between overflow-auto lg:hidden">
-              {data &&
-                data.map((item, index) => (
-                  <li
-                    key={index}
-                    className={`cursor-pointer flex  text-center justify-center items-center hover:bg-[#782353] rounded-3xl lg:py-10 lg:px-36 py-6 px-2 ${
-                      isActive === item.so_thu_tu_su_kien
-                        ? "bg-[#782353] text-white"
-                        : ""
-                    }`}
-                    onClick={() => redirect(item.so_thu_tu_su_kien)}
-                  >
-                    {item.ten_su_kien}
-                  </li>
-                ))}
-            </div>
 
-            <div className="flex flex-col pt-10 mb-16 w-full font-[Montserrat] ">
+            {/* <div className="flex flex-col pt-10 mb-16 w-full font-[Montserrat] ">
               {dataComment.map((item, index) => {
                 const isShowingFullText = showMoreStates[item.id_comment];
                 if (index < 1) {
@@ -223,7 +207,7 @@ export default function EventResult() {
                   </span>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

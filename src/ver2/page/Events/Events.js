@@ -45,16 +45,9 @@ function Events() {
           myEvent: true,
         }}
       />
-      <div className="min-h-screen overflow-hidden events">
-        <div className="events-main">
-          <div
-            className={
-              "lg:w-1/4 z-[10] transition-all transform duration-300 ease-out"
-            }
-            style={{
-              overflowY: "auto",
-            }}
-          >
+      <div className="min-h-screen overflow-hidden events py-4">
+        <div className="flex flex-col-reverse lg:flex-row">
+          <div className="lg:w-1/4 z-[10] transition-all transform duration-300 ease-out max-h-[50vh] lg:max-h-[80vh] overflow-y-scroll">
             <ul className="events-menu">
               <li className="events-menu-item events-menu-add">
                 <NavLink to={`/events/add`}>
@@ -75,7 +68,7 @@ function Events() {
                 : null}
             </ul>
           </div>
-          <div className="w-full min-h-screen lg:w-3/4">
+          <div className="w-full lg:w-3/4">
             <aside className="events-content">
               {listEvent.length > 0 ? (
                 <CommonEvent

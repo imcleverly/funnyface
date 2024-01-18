@@ -4,7 +4,7 @@ import CmtPopup from "../CmtPopup";
 import Moment from "react-moment";
 
 import bgTemplate3 from "../../../components/image/bg-template3.png";
-import frameTemplate3 from "../../../components/image/frame-template3.png";
+import frameTemplate4 from "../../../components/image/frame-template4.png";
 
 import comment from "../../../components/image/comment.png";
 import view from "../../../components/image/view.png";
@@ -14,7 +14,7 @@ import "./Template.css";
 function Template3(props) {
   const handleChangeValue = props?.onChangeValue;
 
-  const { stt, id } = useParams();
+  const { stt } = useParams();
   const data = props.data;
 
   const [isOpenPopup, setIsOpenPopup] = useState(false);
@@ -54,7 +54,7 @@ function Template3(props) {
   return (
     <>
       <div
-        className={`template template3 ${
+        className={`text-black w-full flex flex-col-reverse gap-4 xl:flex-row justify-between items-center p-[30px] md:p-[50px] rounded-2xl ${
           data ? "cursor-pointer" : "template-empty"
         }`}
         style={{ background: `center/cover no-repeat url(${bgTemplate3})` }}
@@ -108,19 +108,19 @@ function Template3(props) {
           </time>
         </div>
 
-        <div className="template-image">
+        <div className="relative w-[160px] h-[160px]">
           <img
-            className="template-image__bg"
-            src={frameTemplate3}
-            alt="first date"
+            loading="lazy"
+            src={frameTemplate4}
+            alt="Date"
+            className="w-full h-full bg-cover absolute top-0 left-0 z-20"
           />
-          {(data || props.image) && (
-            <img
-              className="template-image__swap"
-              src={data?.link_da_swap || props.image}
-              alt="swap"
-            />
-          )}
+          <img
+            loading="lazy"
+            src={data?.link_da_swap || props.image}
+            alt="Result"
+            className="absolute top-[20px] left-[20px] w-[75%] h-[120px] rotate-[16deg]"
+          />
         </div>
       </div>
 

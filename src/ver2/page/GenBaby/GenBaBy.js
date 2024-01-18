@@ -101,9 +101,9 @@ const GenBaby = () => {
 
       setSrcImage((prev) => ({ ...prev, [`src${typeImg}`]: imageUpload }));
     } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+      toast.error(error.message);
     }
+    setIsLoading(false);
   };
 
   const handleDownloadImage = async () => {
@@ -159,9 +159,10 @@ const GenBaby = () => {
       setImageBaby(imageBaby);
       setIsBaby(true);
     } catch (error) {
-      setIsLoading(false);
       console.error(error);
     }
+    setIsLoading(false);
+    setIsRunning(false);
   };
 
   return (
@@ -173,23 +174,25 @@ const GenBaby = () => {
       />
       <div
         style={{ backgroundImage: `url(${imgBg})`, minHeight: "100vh" }}
-        className="relative bg-no-repeat bg-cover genbaby"
+        className="relative bg-no-repeat bg-cover genbaby py-[100px] gap-10"
       >
         {isRunning && !isBaby && (
-          <div className="absolute z-50 progressbar -translate-x-2/4 left-2/4 top-5">
-            <div
-              style={{
-                height: "100%",
-                width: `${filled}%`,
-                backgroundColor: "#a66cff",
-                transition: "width 0.5s",
-              }}
-            ></div>
-            <span className="progressPercent">{filled}%</span>
+          <div className="fixed top-0 left-0 w-screen h-screen z-50 flex justify-center pt-[200px]">
+            <div className="relative z-50 progressbar">
+              <div
+                style={{
+                  height: "100%",
+                  width: `${filled}%`,
+                  backgroundColor: "#a66cff",
+                  transition: "width 0.5s",
+                }}
+              ></div>
+              <span className="progressPercent">{filled}%</span>
+            </div>
           </div>
         )}
 
-        <div className="flex justify-between genbaby-content">
+        <div className="flex flex-col sm:flex-row items-center justify-between w-[80%]">
           <div className="genbaby-item">
             <div className="genbaby-small">
               <img src={boysmall} alt="" />

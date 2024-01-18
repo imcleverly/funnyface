@@ -14,7 +14,7 @@ import "./Template.css";
 function Template4(props) {
   const handleChangeValue = props?.onChangeValue;
 
-  const { stt, id } = useParams();
+  const { stt } = useParams();
   const data = props.data;
 
   const [isOpenPopup, setIsOpenPopup] = useState(false);
@@ -54,7 +54,7 @@ function Template4(props) {
   return (
     <>
       <div
-        className={`template template4 ${
+        className={`text-black w-full flex flex-col-reverse gap-4 xl:flex-row justify-between items-center p-[30px] md:p-[50px] rounded-2xl ${
           data ? "cursor-pointer" : "template-empty"
         }`}
         style={{ background: `center/cover no-repeat url(${bgTemplate5})` }}
@@ -107,15 +107,15 @@ function Template4(props) {
           </time>
         </div>
 
-        <div className="template-image">
+        <div className="relative w-[200px] h-[200px]">
           <img
-            className="template-image__bg"
+            className="w-full h-full bg-cover"
             src={frameTemplate5}
             alt="first date"
           />
           {(data || props.image) && (
             <img
-              className="template-image__swap"
+              className="absolute top-[20px] left-[20px] w-[150px] h-[150px] rotate-6"
               src={data?.link_da_swap || props?.image}
               alt="swap"
             />

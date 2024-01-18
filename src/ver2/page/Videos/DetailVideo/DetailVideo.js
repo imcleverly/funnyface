@@ -5,44 +5,54 @@ import "./DetailVideo.css";
 import JSZip from "jszip";
 import JSZipUtils from "jszip-utils";
 import { saveAs } from "file-saver";
-import Header from "../../../components/Header/Header";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+
 import useLoading from "../../../hooks/useLoading";
+import Header from "../../../components/Header/Header";
+import { getUserById } from "../../../services/user.service";
 
 const DetailVideo = () => {
   const { id } = useParams();
   const [data, setData] = useState("");
   const [video, setVideo] = useState("");
   const [videoGoc, SetVideoGoc] = useState("");
+  const [user, setUser] = useState(null);
 
   const { setIsLoading } = useLoading();
 
   const zip = new JSZip();
 
-  const [idUser, setIdUser] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
+        const responseEvent = await axios.get(
           `https://metatechvn.store/lovehistory/sukien/video/${id}`
         );
 
-        setIdUser(response.data.sukien_video[0].id_user);
-        setData(response.data.sukien_video[0]);
-        setVideo(response.data.sukien_video[0].link_vid_swap);
-        SetVideoGoc(response.data.sukien_video[0].link_video_goc);
-        console.log("Video Value:", video);
-        console.log(response.data);
+        const userId = responseEvent.data.sukien_video[0].id_user;
+
+        const responseUser = await getUserById(userId);
+
+        setUser(responseUser.data);
+        setData(responseEvent.data.sukien_video[0]);
+        setVideo(responseEvent.data.sukien_video[0].link_vid_swap);
+        SetVideoGoc(responseEvent.data.sukien_video[0].link_video_goc);
+        console.log(responseEvent.data);
       } catch (error) {
-        console.error(error);
+        toast.error(error.message);
       }
       setIsLoading(false);
     };
 
     fetchData();
   }, [id]);
+
+  const handleShare = async () => {
+    toast.success("Copied to your clipboard!");
+  };
 
   const handleDownloadVideo = async () => {
     setIsLoading(true);
@@ -67,46 +77,82 @@ const DetailVideo = () => {
         }}
       />
       <div className="video-detail">
-        <div className="flex items-center justify-between">
-          <div className="w-1/3 detail-user">
-            <p className="detail-result">Success, this is the result!!</p>
+        <div className="flex flex-col xl:flex-row items-center justify-between gap-5">
+          <div className="flex flex-col gap-4 xl:w-1/3">
+            <p className="w-full text-green-400 text-3xl font-semibold">
+              Success, this is the result!!
+            </p>
 
-            <div className="detail-info">
-              <div className="detail-avatar lg:w-[160px] lg:h-[160px] w-[90px] h-[90px]">
-                <Link to={`/profile/${idUser}`}>
+            <div className="flex flex-col items-center gap-4 text-white">
+              <div className="lg:w-[200px] lg:h-[200px] w-[150px] h-[150px] rounded-full overflow-hidden border-4 border-white">
+                <Link to={`/profile/${user?.id_user}`}>
                   <img
                     src={data.link_image}
                     alt=""
-                    //   className="lg:w-[100%] lg:h-[1000%] w-[80%] h-[80%] object-fill  rounded-full ml-2  mt-6 lg:mt-10 "
+                    className="w-full h-full bg-cover"
                   />
                 </Link>
               </div>
 
-              <p className="detail-name">{data.ten_su_kien}</p>
-              <p className="detail-time">{data.thoigian_taosk}</p>
+              <Link
+                to={`/profile/${user?.id_user}`}
+                className="text-4xl hover:opacity-40"
+              >
+                {user?.user_name}
+              </Link>
+              <p className="text-3xl">{data.ten_su_kien}</p>
+              <p className="text-2xl text-gray-400">{data.thoigian_taosk}</p>
             </div>
 
-            <div className="detail-button">
-              <button className="detail-btn detail-save" type="button">
-                Save to my collection
-              </button>
-              <div
-                className="detail-btn detail-download cursor-pointer"
+            <div className="flex flex-col gap-3">
+              <CopyToClipboard
+                text={`https://funface.online/videos/detail-video/${id}`}
+              >
+                <button
+                  type="button"
+                  className="hidden md:block p-4 rounded-xl bg-white text-black text-2xl md:text-4xl"
+                  onClick={handleShare}
+                >
+                  Share
+                </button>
+              </CopyToClipboard>
+              <button
+                className="hidden md:block p-4 rounded-xl bg-green-400 text-white text-2xl md:text-4xl"
+                type="button"
                 onClick={handleDownloadVideo}
               >
                 Download video
-              </div>
+              </button>
             </div>
           </div>
 
-          <div className="w-2/3 detail-main">
-            <div className="w-1/2 detail-video-item">
+          <div className="xl:w-2/3 flex flex-col md:flex-row gap-4">
+            <div className="w-full md:w-1/2 detail-video-item">
               <video className="" controls key={id} src={video}></video>
             </div>
 
-            <div className="w-1/2 detail-video-item">
+            <div className="w-full md:w-1/2 detail-video-item">
               <video className="" controls key={id} src={videoGoc}></video>
             </div>
+
+            <CopyToClipboard
+              text={`https://funface.online/videos/detail-video/${id}`}
+            >
+              <button
+                type="button"
+                className="hidden md:block p-4 rounded-xl bg-white text-black text-2xl md:text-4xl"
+                onClick={handleShare}
+              >
+                Share
+              </button>
+            </CopyToClipboard>
+            <button
+              className="block md:hidden p-4 rounded-xl bg-green-400 text-white text-2xl md:text-4xl"
+              type="button"
+              onClick={handleDownloadVideo}
+            >
+              Download video
+            </button>
           </div>
         </div>
       </div>

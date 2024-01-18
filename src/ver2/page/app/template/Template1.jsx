@@ -54,7 +54,7 @@ function Template1(props) {
   return (
     <>
       <div
-        className={`template template1 ${
+        className={`text-black w-full flex flex-col-reverse gap-4 xl:flex-row justify-between items-center p-[30px] md:p-[50px] rounded-2xl ${
           data ? "cursor-pointer" : "template-empty"
         }`}
         style={{ background: `center/cover no-repeat url(${bgTemplate1})` }}
@@ -108,19 +108,19 @@ function Template1(props) {
           </time>
         </div>
 
-        <div className="template-image">
+        <div className="relative w-[150px] h-[150px] sm:w-[150px] sm:h-[150px]">
           <img
-            className="template-image__bg"
+            loading="lazy"
             src={frameTemplate1}
-            alt="first date"
+            alt="Date"
+            className="w-full h-full absolute top-0 left-0 z-20"
           />
-          {(data || props.image) && (
-            <img
-              className="template-image__swap"
-              src={data?.link_da_swap || props.image}
-              alt="swap"
-            />
-          )}
+          <img
+            loading="lazy"
+            src={data?.link_da_swap || props.image}
+            alt="Result"
+            className="absolute top-[25px] left-[25px] sm:top-[30px] sm:left-[30px] w-[110px] h-[110px] sm:w-[100px] sm:h-[110px]"
+          />
         </div>
       </div>
 

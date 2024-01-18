@@ -18,7 +18,7 @@
 
 .template-title {
   font-size: 24px;
-  font-family: 'starborn';
+  font-family: "starborn";
 }
 
 .template-text {
@@ -107,7 +107,7 @@
   transform: rotate(3deg);
 }
 
-.template4 .template-image__swap {
+.template4-image__swap {
   width: 80%;
   height: 78%;
   transform: rotate(5deg);

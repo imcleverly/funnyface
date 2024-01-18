@@ -125,26 +125,31 @@ const Header = ({ data }) => {
         </div>
         <div className="flex justify-between items-center">
           {data?.title && (
-            <h2 className="text-3xl font-bold uppercase">{data.title}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold uppercase">
+              {data.title}
+            </h2>
           )}
           {data?.myCollection && (
-            <Link to={`/${data.myCollection}`} className="text-4xl font-bold">
+            <Link
+              to={`/${data.myCollection}`}
+              className="text-3xl md:text-4xl font-bold"
+            >
               My collections
             </Link>
           )}
           {data?.myEvent && (
-            <Link to="/events" className="text-4xl font-bold">
+            <Link to="/events" className="text-3xl md:text-4xl font-bold">
               My events
             </Link>
           )}
         </div>
 
         {data?.events && (
-          <div className="flex flex-col gap-10 pt-[20px]">
-            <div className="w-full flex justify-between items-center">
-              <div className="flex">
+          <div className="flex flex-col gap-10 pt-[20px] items-center lg:items-start">
+            <div className="w-full flex flex-col-reverse lg:flex-row justify-between items-center gap-4">
+              <div className="flex mr-[80px]">
                 <div className="relative">
-                  <div className="absolute top-0 left-0 w-[120px] h-[120px] rounded-full border-4 border-blue-400 bg-gray-400 cursor-pointer">
+                  <div className="relative w-[120px] h-[120px] rounded-full border-4 border-blue-400 bg-gray-400 cursor-pointer">
                     {dataUser?.link_nam_goc && (
                       <img
                         src={dataUser.link_nam_goc}
@@ -160,25 +165,23 @@ const Header = ({ data }) => {
                         className="w-full h-full bg-cover"
                       />
                     </div>
-                  </div>
-                </div>
 
-                <div className="relative min-h-[120px]">
-                  <div className="absolute top-0 left-[80px] w-[120px] h-[120px] rounded-full border-4 border-pink-500 bg-gray-400 cursor-pointer">
-                    {dataUser?.link_nu_goc && (
-                      <img
-                        src={dataUser.link_nu_goc}
-                        alt="boy root"
-                        onClick={() => modalShow(dataUser.link_nu_goc)}
-                        className="w-full h-full bg-cover rounded-full"
-                      />
-                    )}
-                    <div className="w-[40px] h-[40px] absolute top-[80%] right-0 ">
-                      <img
-                        src={girlsmall}
-                        alt="Boy"
-                        className="w-full h-full bg-cover"
-                      />
+                    <div className="absolute top-0 left-[80px] w-[120px] h-[120px] rounded-full border-4 border-pink-500 bg-gray-400 cursor-pointer">
+                      {dataUser?.link_nu_goc && (
+                        <img
+                          src={dataUser.link_nu_goc}
+                          alt="boy root"
+                          onClick={() => modalShow(dataUser.link_nu_goc)}
+                          className="w-full h-full bg-cover rounded-full"
+                        />
+                      )}
+                      <div className="w-[40px] h-[40px] absolute top-[80%] right-0 ">
+                        <img
+                          src={girlsmall}
+                          alt="Boy"
+                          className="w-full h-full bg-cover"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -189,7 +192,10 @@ const Header = ({ data }) => {
               </div>
             </div>
             {data?.id_user && (
-              <Link to={`/profile/${data?.id_user}`} className="text-3xl ml-20">
+              <Link
+                to={`/profile/${data?.id_user}`}
+                className="text-3xl ml-0 lg:ml-20"
+              >
                 {data?.user_name}
               </Link>
             )}
