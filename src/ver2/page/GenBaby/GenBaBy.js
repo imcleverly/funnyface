@@ -192,21 +192,17 @@ const GenBaby = () => {
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row items-center justify-between w-[80%]">
+        <div className="flex flex-col sm:flex-row items-center justify-between w-[80%] gap-4">
           <div className="flex gap-2">
-            <div className="genbaby-small">
-              <img src={boysmall} alt="" />
-            </div>
-
-            <div className="genbaby-main">
+            <div className="flex flex-col justify-center items-center gap-4">
               <div
-                className="relative w-[130px] h-[130px] rounded-full bg-gray-400 overflow-hidden border-8 border-[#26a5fc]"
+                className="flex items-center justify-center relative w-[130px] h-[130px] rounded-full bg-gray-400 overflow-hidden border-8 border-[#26a5fc] cursor-pointer"
                 onClick={() => inputNamRef.current?.click()}
               >
-                <img className="genbaby-icon-add" src={add} alt="" />
+                <img className="w-1/3 h-1/3 bg-cover" src={add} alt="" />
 
                 <div
-                  className="genbaby-img"
+                  className="absolute top-0 left-0 w-full h-full bg-cover bg-no-repeat bg-center"
                   style={
                     showImg.imgNam
                       ? { backgroundImage: `url(${showImg.imgNam})` }
@@ -225,42 +221,50 @@ const GenBaby = () => {
                 />
               </div>
 
-              <div className="genbaby-name genbaby-boy">
+              <div className="relative">
                 <input
                   name="male"
                   onChange={handleChangeName}
                   type="text"
                   placeholder="His name"
+                  className="text-center outline-none border-none px-4 py-3 text-3xl text-white placeholder-white font-bold bg-[#26a5fc] rounded-full w-[150px]"
                 />
+                <div className="absolute top-2 left-[-40px] w-[36px] h-[36px]">
+                  <img
+                    src={boysmall}
+                    alt="Boy"
+                    className="w-full h-full bg-cover"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           <button
             onClick={() => fetchData()}
-            className="transition-transform duration-300 hover:scale-125"
+            className="w-[100px] md:w-[150px] transition-transform duration-300 hover:scale-125"
           >
             <img
               src={iconGenBaby}
               alt=""
-              className="cursor-pointer genbaby-heart"
+              className="w-full h-auto bg-cover cursor-pointer"
             />
           </button>
 
           <div className="flex gap-2">
-            <div className="genbaby-small">
-              <img src={girlsmall} alt="" />
-            </div>
-
-            <div className="genbaby-main">
+            <div className="flex flex-col justify-center items-center gap-4">
               <div
-                className="relative w-[130px] h-[130px] rounded-full bg-gray-400 overflow-hidden border-8 border-[#ff356e]"
+                className="flex justify-center items-center relative w-[130px] h-[130px] rounded-full bg-gray-400 overflow-hidden border-8 border-[#ff356e] cursor-pointer"
                 onClick={() => inputNuRef.current?.click()}
               >
-                <img className="genbaby-icon-add" src={add} alt="" />
+                <img
+                  className="w-1/3 h-1/3 bg-cover cursor-pointer bg-no-repeat bg-center"
+                  src={add}
+                  alt=""
+                />
 
                 <div
-                  className="genbaby-img"
+                  className="absolute top-0 left-0 w-full h-full bg-cover"
                   style={
                     showImg.imgNu
                       ? { backgroundImage: `url(${showImg.imgNu})` }
@@ -279,13 +283,21 @@ const GenBaby = () => {
                 />
               </div>
 
-              <div className="genbaby-name genbaby-girl">
+              <div className="relative">
                 <input
                   name="female"
                   onChange={handleChangeName}
                   type="text"
                   placeholder="Her name"
+                  className="text-center outline-none border-none px-4 py-3 text-3xl text-white placeholder-white font-bold bg-[#ff356e] rounded-full w-[150px]"
                 />
+                <div className="absolute top-2 left-[-40px] w-[36px] h-[36px]">
+                  <img
+                    src={girlsmall}
+                    alt="Girl"
+                    className="w-full h-full bg-cover"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -311,12 +323,15 @@ const GenBaby = () => {
 
         <div className="transition-transform duration-300 genbaby-btn hover:scale-125 ">
           {!isBaby ? (
-            <button onClick={fetchData} className="text-4xl genbaby-btn-start">
+            <button
+              onClick={fetchData}
+              className="text-2xl md:text-4xl genbaby-btn-start"
+            >
               Start
             </button>
           ) : (
             <button
-              className="text-4xl genbaby-btn-download"
+              className="text-2xl md:text-4xl genbaby-btn-download"
               onClick={handleDownloadImage}
             >
               Download image

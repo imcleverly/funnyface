@@ -6,7 +6,7 @@ import useAuth from "../ver2/hooks/useAuth";
 const AuthMiddleware = () => {
   const { user } = useAuth();
 
-  const isLogin = !!user.id_user;
+  const isLogin = !!user?.id_user;
 
   return isLogin ? <Navigate to="/" /> : <Outlet />;
 };

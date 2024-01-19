@@ -120,10 +120,10 @@ function CreateImage() {
       await faceapi.nets.faceExpressionNet.loadFromUri("/models");
       await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
 
-      const trainingData = await loadTranningData();
-      faceMatcher = new faceapi.FaceMatcher(trainingData, 1);
+      // const trainingData = await loadTranningData();
+      // faceMatcher = new faceapi.FaceMatcher(trainingData, 1);
 
-      toast.success("Tải xong mô hình");
+      // toast.success("Tải xong mô hình");
     } catch (error) {
       toast.error("Error while loading models: " + error.message);
     }
@@ -197,14 +197,14 @@ function CreateImage() {
   const [srcNu, setSrcNu] = useState("");
 
   const handleChangeImage = async (event, setImage, atImg, contentId) => {
-    const content = document.querySelector(`#${contentId}`);
+    // const content = document.querySelector(`#${contentId}`);
 
     let file = event.target.files[0];
     if (!file) return;
     setIsLoading(true);
 
     try {
-      await checkGlass(file, atImg, content);
+      // await checkGlass(file, atImg, content);
       const res = await validImage(URL.createObjectURL(file));
       if (res.length === 0) {
         setIsLoading(false);

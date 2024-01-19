@@ -7,7 +7,7 @@ import LayoutUser from "../ver2/layouts/LayoutUser";
 const LayoutMiddleware = () => {
   const { user } = useAuth();
 
-  const isLogin = !!user.id_user;
+  const isLogin = !!user?.id_user;
 
   return isLogin ? <LayoutUser /> : <LayoutGuest />;
 };
