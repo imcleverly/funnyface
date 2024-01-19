@@ -26,6 +26,10 @@ function Home() {
     event: 1,
     comment: 1,
   });
+  const [seeMore, setSeeMore] = useState({
+    event: false,
+    comment: false,
+  });
 
   const navigate = useNavigate();
   const { setIsLoading } = useLoading();
@@ -227,12 +231,28 @@ function Home() {
               <h3 className="uppercase text-2xl md:text-4xl font-semibold">
                 Events
               </h3>
-              <div className="max-h-[80vh] overflow-y-scroll">
-                {data.events?.map((item) =>
-                  item.sukien.map((event, index) => (
-                    <EventItem key={index} {...event} />
-                  ))
-                )}
+              <div className="">
+                {data.events
+                  ?.slice(0, seeMore.event ? data.events?.length : 5)
+                  .map((item) =>
+                    item.sukien
+                      ?.slice(0, seeMore.event ? item?.length : 1)
+                      .map((event, index) => (
+                        <EventItem key={index} {...event} />
+                      ))
+                  )}
+                <div className="flex items-center justify-center py-4">
+                  <span
+                    className="text-xl text-white hover:opacity-40 cursor-pointer"
+                    onClick={() =>
+                      seeMore.event
+                        ? setSeeMore({ ...seeMore, event: false })
+                        : setSeeMore({ ...seeMore, event: true })
+                    }
+                  >
+                    {seeMore.event ? "See less" : "See more"}
+                  </span>
+                </div>
               </div>
               <PaginationsButton
                 page={currentPage.event}
@@ -245,10 +265,24 @@ function Home() {
               <h3 className="text-white uppercase text-2xl md:text-4xl font-semibold">
                 Comments
               </h3>
-              <div className="max-h-[40vh] overflow-y-scroll">
-                {data.comments?.map((comment, index) => (
-                  <CommentItem key={index} {...comment} />
-                ))}
+              <div className="">
+                {data.comments
+                  ?.slice(0, seeMore.comment ? data.comments?.length : 5)
+                  .map((comment, index) => (
+                    <CommentItem key={index} {...comment} />
+                  ))}
+                <div className="flex items-center justify-center py-4">
+                  <span
+                    className="text-xl text-white hover:opacity-40 cursor-pointer"
+                    onClick={() =>
+                      seeMore.comment
+                        ? setSeeMore({ ...seeMore, comment: false })
+                        : setSeeMore({ ...seeMore, comment: true })
+                    }
+                  >
+                    {seeMore.comment ? "See less" : "See more"}
+                  </span>
+                </div>
               </div>
               <PaginationsButton
                 page={currentPage.comment}

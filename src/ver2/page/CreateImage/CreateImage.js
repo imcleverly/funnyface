@@ -34,17 +34,18 @@ function CreateImage() {
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
   const [showImg, setShowImg] = useState({ img1: null, img2: null });
+  const [sameFace, setSameFace] = useState({
+    img1: null,
+    img2: null,
+  });
 
   const { setIsLoading } = useLoading();
   const navigate = useNavigate();
 
   const { user } = useAuth();
-  const token = user.token;
 
-  const [sameFace, setSameFace] = useState({
-    img1: null,
-    img2: null,
-  });
+  const token = user.token;
+  let faceMatcher = null;
 
   // todo ------------------------------------
   const img1Ref = useRef();
@@ -78,19 +79,60 @@ function CreateImage() {
 
   const [showModals22, setShowModals22] = React.useState(true);
 
+  const loadTranningData = async () => {
+    const labels = ["Đeo kính", "Không đeo kính"];
+    const faceDescriptors = [];
+
+    try {
+      for (const label of labels) {
+        const descriptors = [];
+
+        for (let i = 1; i <= 20; i++) {
+          const image = await faceapi.fetchImage(
+            `/trainingData/${label}/${i}.jpg`
+          );
+          const detection = await faceapi
+            .detectSingleFace(image)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+          descriptors.push(detection.descriptor);
+        }
+
+        faceDescriptors.push(
+          new faceapi.LabeledFaceDescriptors(label, descriptors)
+        );
+
+        toast.success("Loaded training model successfully");
+      }
+
+      return faceDescriptors;
+    } catch (err) {
+      toast.error("Loaded training model fail: " + err.message);
+    }
+  };
+
+  const loadModels = async () => {
+    setIsLoading(true);
+    try {
+      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+      await faceapi.nets.faceExpressionNet.loadFromUri("/models");
+      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
+
+      const trainingData = await loadTranningData();
+      faceMatcher = new faceapi.FaceMatcher(trainingData, 1);
+
+      toast.success("Tải xong mô hình");
+    } catch (error) {
+      toast.error("Error while loading models: " + error.message);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     loadModels();
   }, []);
-
-  const loadModels = () => {
-    Promise.all([
-      faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-      faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-      faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-      faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-      faceapi.nets.ssdMobilenetv1.loadFromUri("./models"),
-    ]).then(() => {});
-  };
 
   const closeUploadImg = async () => {
     setImage1(null);
@@ -126,15 +168,43 @@ function CreateImage() {
     }
   };
 
-  const [srcnam, Setsrcnam] = useState("");
-  const [srcnu, Setsrcnu] = useState("");
+  const checkGlass = async (file, alt, content) => {
+    const image = await faceapi.bufferToImage(file);
+    const canvas = faceapi.createCanvasFromMedia(image);
 
-  const handleChangeImage = async (event, setImage, atImg) => {
+    content.innerHTML = "";
+    content.appendChild(image);
+    content.appendChild(canvas);
+    const size = {
+      width: image.width,
+      height: image.height,
+    };
+    faceapi.matchDimensions(canvas, size);
+    const detections = await faceapi
+      .detectAllFaces(image)
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+    const resizedDetections = faceapi.resizeResults(detections, size);
+    for (const detection of resizedDetections) {
+      const drawBox = new faceapi.draw.DrawBox(detection.detection.box, {
+        label: faceMatcher?.findBestMatch(detection.descriptor).toString(),
+      });
+      drawBox.draw(canvas);
+    }
+  };
+
+  const [srcNam, setSrcNam] = useState("");
+  const [srcNu, setSrcNu] = useState("");
+
+  const handleChangeImage = async (event, setImage, atImg, contentId) => {
+    const content = document.querySelector(`#${contentId}`);
+
     let file = event.target.files[0];
     if (!file) return;
     setIsLoading(true);
 
     try {
+      await checkGlass(file, atImg, content);
       const res = await validImage(URL.createObjectURL(file));
       if (res.length === 0) {
         setIsLoading(false);
@@ -186,7 +256,7 @@ function CreateImage() {
           closeUploadImg();
         }
 
-        Setsrcnam(res1);
+        setSrcNam(res1);
       } else {
         let send = showImg;
         send.img2 = URL.createObjectURL(file);
@@ -198,7 +268,7 @@ function CreateImage() {
           closeUploadImg();
         }
 
-        Setsrcnu(res2);
+        setSrcNu(res2);
       }
     } catch (error) {
       console.log(error);
@@ -342,8 +412,8 @@ function CreateImage() {
       const device = await getMyDetailUser();
 
       const res3 = await createEvent(
-        srcnam,
-        srcnu,
+        srcNam,
+        srcNu,
         device.browser,
         device.ip,
         device.nameM,
@@ -424,7 +494,7 @@ function CreateImage() {
             <div className="createVideo-upload-image">
               <label htmlFor="">Upload the replaced image</label>
               <div
-                className="createVideo-wrap"
+                className="createVideo-wrap relative"
                 style={{
                   border: showImg?.img1 ? "none" : "1px dashed #fff",
                   backgroundColor: "#00000033",
@@ -443,11 +513,16 @@ function CreateImage() {
                 )}
 
                 <input
+                  id="img1"
                   type="file"
-                  onChange={(e) => handleChangeImage(e, setImage1, "img1")}
+                  onChange={(e) =>
+                    handleChangeImage(e, setImage1, "img1", "content1")
+                  }
                   accept="image/*"
                   ref={img1Ref}
                 />
+
+                <div id="content1" class="w-[300px]"></div>
               </div>
             </div>
 
@@ -473,11 +548,16 @@ function CreateImage() {
                 )}
 
                 <input
+                  id="img2"
                   type="file"
-                  onChange={(e) => handleChangeImage(e, setImage2, "img2")}
+                  onChange={(e) =>
+                    handleChangeImage(e, setImage2, "img2", "content2")
+                  }
                   accept="image/*"
                   ref={img2Ref}
                 />
+
+                <div id="content2" class="w-[300px]"></div>
               </div>
             </div>
 

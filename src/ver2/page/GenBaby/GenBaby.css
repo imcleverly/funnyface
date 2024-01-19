@@ -1,21 +1,21 @@
-.genbaby {
+/* .genbaby {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
+} */
 
-.genbaby-content {
+/* .genbaby-content {
   padding-top: 160px;
   width: 642px;
   align-items: center;
-}
+} */
 
-.genbaby-item {
+/* .genbaby-item {
   display: flex;
   gap: 8px;
-}
+} */
 
-.genbaby-upload-image {
+/* .genbaby-upload-image {
   width: 132px;
   height: 132px;
   border-radius: 50%;
@@ -23,14 +23,14 @@
 
   background: linear-gradient(0deg, #777777, #777777);
   overflow: hidden;
-}
-.genbaby-upload-image.genbaby-boy {
+} */
+/* .genbaby-upload-image.genbaby-boy {
   border: 6px solid #26a5fc;
 }
 .genbaby-upload-image.genbaby-girl {
   border: 6px solid rgb(255, 53, 110);
-}
-.genbaby-upload-image > input {
+} */
+/* .genbaby-upload-image > input {
   position: absolute;
   top: 0;
   left: 0;
@@ -39,7 +39,7 @@
 
   opacity: 0;
   cursor: pointer;
-}
+} */
 
 .genbaby-icon-add {
   position: absolute;

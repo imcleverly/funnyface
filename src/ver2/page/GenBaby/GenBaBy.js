@@ -174,7 +174,7 @@ const GenBaby = () => {
       />
       <div
         style={{ backgroundImage: `url(${imgBg})`, minHeight: "100vh" }}
-        className="relative bg-no-repeat bg-cover genbaby py-[100px] gap-10"
+        className="relative bg-no-repeat bg-cover flex flex-col items-center py-[100px] gap-10"
       >
         {isRunning && !isBaby && (
           <div className="fixed top-0 left-0 w-screen h-screen z-50 flex justify-center pt-[200px]">
@@ -193,13 +193,16 @@ const GenBaby = () => {
         )}
 
         <div className="flex flex-col sm:flex-row items-center justify-between w-[80%]">
-          <div className="genbaby-item">
+          <div className="flex gap-2">
             <div className="genbaby-small">
               <img src={boysmall} alt="" />
             </div>
 
             <div className="genbaby-main">
-              <div className="genbaby-upload-image genbaby-boy">
+              <div
+                className="relative w-[130px] h-[130px] rounded-full bg-gray-400 overflow-hidden border-8 border-[#26a5fc]"
+                onClick={() => inputNamRef.current?.click()}
+              >
                 <img className="genbaby-icon-add" src={add} alt="" />
 
                 <div
@@ -218,6 +221,7 @@ const GenBaby = () => {
                   type="file"
                   accept="image/*"
                   ref={inputNamRef}
+                  className="hidden"
                 />
               </div>
 
@@ -243,13 +247,16 @@ const GenBaby = () => {
             />
           </button>
 
-          <div className="genbaby-item">
+          <div className="flex gap-2">
             <div className="genbaby-small">
               <img src={girlsmall} alt="" />
             </div>
 
             <div className="genbaby-main">
-              <div className="genbaby-upload-image genbaby-girl">
+              <div
+                className="relative w-[130px] h-[130px] rounded-full bg-gray-400 overflow-hidden border-8 border-[#ff356e]"
+                onClick={() => inputNuRef.current?.click()}
+              >
                 <img className="genbaby-icon-add" src={add} alt="" />
 
                 <div
@@ -268,6 +275,7 @@ const GenBaby = () => {
                   type="file"
                   accept="image/*"
                   ref={inputNuRef}
+                  className="hidden"
                 />
               </div>
 

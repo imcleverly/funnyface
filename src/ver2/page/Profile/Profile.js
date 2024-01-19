@@ -40,6 +40,10 @@ function Profile() {
     event: 1,
     comment: 1,
   });
+  const [seeMore, setSeeMore] = useState({
+    event: false,
+    comment: false,
+  });
 
   const pages = {
     event: 100,
@@ -303,8 +307,8 @@ function Profile() {
               {!!!events?.length ? (
                 <span className="text-xl">You don't have any events yet.</span>
               ) : (
-                <div className="max-h-[80vh] overflow-y-scroll">
-                  {events?.map(
+                <div className="">
+                  {events?.slice(0, seeMore.event ? events?.length : 5).map(
                     (item, index) => (
                       <EventItem key={index} {...item.sukien[0]} />
                     )
@@ -312,6 +316,18 @@ function Profile() {
                       <EventItem key={index} {...event} />
                     )) */
                   )}
+                  <div className="flex items-center justify-center py-4">
+                    <span
+                      className="text-xl text-white hover:opacity-40 cursor-pointer"
+                      onClick={() =>
+                        seeMore.event
+                          ? setSeeMore({ ...seeMore, event: false })
+                          : setSeeMore({ ...seeMore, event: true })
+                      }
+                    >
+                      {seeMore.event ? "See less" : "See more"}
+                    </span>
+                  </div>
                 </div>
               )}
               <PaginationsButton
@@ -330,10 +346,24 @@ function Profile() {
                   You don't have any comments yet.
                 </span>
               ) : (
-                <div className="max-h-[40vh] overflow-y-scroll">
-                  {comments?.map((comment, index) => (
-                    <CommentItem key={index} {...comment} />
-                  ))}
+                <div className="">
+                  {comments
+                    ?.slice(0, seeMore.comment ? comments?.length : 5)
+                    .map((comment, index) => (
+                      <CommentItem key={index} {...comment} />
+                    ))}
+                  <div className="flex items-center justify-center py-4">
+                    <span
+                      className="text-xl text-white hover:opacity-40 cursor-pointer"
+                      onClick={() =>
+                        seeMore.comment
+                          ? setSeeMore({ ...seeMore, comment: false })
+                          : setSeeMore({ ...seeMore, comment: true })
+                      }
+                    >
+                      {seeMore.comment ? "See less" : "See more"}
+                    </span>
+                  </div>
                 </div>
               )}
               <PaginationsButton

@@ -140,7 +140,7 @@ const DetailVideo = () => {
             >
               <button
                 type="button"
-                className="hidden md:block p-4 rounded-xl bg-white text-black text-2xl md:text-4xl"
+                className="block md:hidden p-4 rounded-xl bg-white text-black text-2xl md:text-4xl"
                 onClick={handleShare}
               >
                 Share
