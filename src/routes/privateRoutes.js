@@ -35,10 +35,11 @@ export const privateRoutes = (
       <Route path="detail-video/:id" element={<DetailVideo />} />
     </Route>
 
-    <Route path="/images">
+    <Route path="/images/*">
       <Route index element={<Images />} />
       <Route path="detail-image/:id" element={<DetailImage />} />
       <Route path="detail-album/:id" element={<DetailAlbum />} />
+      <Route path="*" element={<Images />} />
     </Route>
 
     <Route path="/download-app" element={<Download />} />
